@@ -1,0 +1,85 @@
+name: Build Ymir Plugins
+
+# Sen sadece Anthology-Ymir.zip dosyasını repoya yüklüyorsun (main'e push).
+# Bu workflow en yeni zip'i açar, manifest.json + providers/ dosyalarını repoya
+# yerleştirir, TÜM zip'leri siler, değişiklikleri commit eder ve GitHub Pages'e
+# yayınlar. Zip'le başka hiçbir şey yapmana gerek yok.
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: En yeni zip'i aç ve dosyaları yerleştir
+        run: |
+          shopt -s nullglob
+          zips=(*.zip)
+          if [ ${#zips[@]} -gt 0 ]; then
+            newest=$(ls -t *.zip | head -1)
+            echo "Açılıyor (en yeni): $newest"
+            rm -rf _extracted && mkdir -p _extracted
+            unzip -o "$newest" -d _extracted
+
+            # manifest.json'u köke koy
+            manifest=$(find _extracted -name manifest.json | head -1)
+            if [ -n "$manifest" ]; then cp "$manifest" manifest.json; fi
+
+            # providers/ klasörünü tamamen yenile
+            rm -rf providers && mkdir -p providers
+            find _extracted -path "*/providers/*.js" -exec cp {} providers/ \;
+
+            # opsiyonel ek dosyalar
+            find _extracted -name domains.json -exec cp {} domains.json \; 2>/dev/null || true
+            find _extracted -name icon.png -exec cp {} icon.png \; 2>/dev/null || true
+
+            # tüm zip'leri ve geçici klasörü temizle
+            rm -f *.zip
+            rm -rf _extracted
+            echo "Yerleştirilen provider sayısı: $(ls providers | wc -l)"
+          else
+            echo "Zip yok; repodaki mevcut dosyalar kullanılacak."
+          fi
+
+      - name: Değişiklikleri commit et (zip'i sil, dosyaları güncelle)
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Otomatik: plugin zip açıldı ve yayınlandı"
+          file_pattern: "."
+
+      - name: Pages için _site hazırla
+        run: |
+          rm -rf _site && mkdir -p _site/providers
+          cp manifest.json _site/manifest.json
+          cp -r providers/* _site/providers/ 2>/dev/null || true
+          [ -f domains.json ] && cp domains.json _site/domains.json || true
+          [ -f icon.png ] && cp icon.png _site/icon.png || true
+          echo "Yayınlanan dosyalar:"; find _site -type f | sort
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
