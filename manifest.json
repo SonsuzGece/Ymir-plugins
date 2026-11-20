@@ -487,9 +487,239 @@
       "supportsExternalPlayer": true
     },
     {
+      "id": "bb_animecix",
+      "name": "AnimeciX (bb)",
+      "description": "bigbull kaynağı — site araması + HLS/MP4 akışları (dizi).",
+      "version": "1.0.0",
+      "author": "bigbull/ymir",
+      "supportedTypes": [
+        "tv",
+        "series"
+      ],
+      "filename": "providers/bb_animecix.js",
+      "enabled": true,
+      "formats": [
+        "m3u8",
+        "mp4",
+        "hls"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=animecix.tv&sz=128",
+      "contentLanguage": [
+        "tr"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "bb_asyaanimeleri",
+      "name": "AsyaAnimeleri (bb)",
+      "description": "bigbull kaynağı — site araması + HLS/MP4 akışları (dizi).",
+      "version": "1.0.0",
+      "author": "bigbull/ymir",
+      "supportedTypes": [
+        "tv",
+        "series"
+      ],
+      "filename": "providers/bb_asyaanimeleri.js",
+      "enabled": true,
+      "formats": [
+        "m3u8",
+        "mp4",
+        "hls"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=asyaanimeleri.top&sz=128",
+      "contentLanguage": [
+        "tr"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "bb_ddizi",
+      "name": "DDizi (bb)",
+      "description": "bigbull kaynağı — site araması + HLS/MP4 akışları (dizi).",
+      "version": "1.0.0",
+      "author": "bigbull/ymir",
+      "supportedTypes": [
+        "tv",
+        "series"
+      ],
+      "filename": "providers/bb_ddizi.js",
+      "enabled": true,
+      "formats": [
+        "m3u8",
+        "mp4",
+        "hls"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=ddizi.watch&sz=128",
+      "contentLanguage": [
+        "tr"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "bb_dizibal",
+      "name": "DiziBal (bb)",
+      "description": "bigbull kaynağı — site araması + HLS/MP4 akışları (dizi).",
+      "version": "1.0.0",
+      "author": "bigbull/ymir",
+      "supportedTypes": [
+        "tv",
+        "series"
+      ],
+      "filename": "providers/bb_dizibal.js",
+      "enabled": true,
+      "formats": [
+        "m3u8",
+        "mp4",
+        "hls"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=dizibal.com&sz=128",
+      "contentLanguage": [
+        "tr"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "bb_dizibox",
+      "name": "Dizibox (bb)",
+      "description": "bigbull kaynağı — site araması + HLS/MP4 akışları (dizi).",
+      "version": "1.0.0",
+      "author": "bigbull/ymir",
+      "supportedTypes": [
+        "tv",
+        "series"
+      ],
+      "filename": "providers/bb_dizibox.js",
+      "enabled": true,
+      "formats": [
+        "m3u8",
+        "mp4",
+        "hls"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=dizibox.live&sz=128",
+      "contentLanguage": [
+        "tr"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "bb_dizikorea3",
+      "name": "DiziKorea (bb)",
+      "description": "bigbull kaynağı — site araması + HLS/MP4 akışları (dizi).",
+      "version": "1.0.0",
+      "author": "bigbull/ymir",
+      "supportedTypes": [
+        "tv",
+        "series"
+      ],
+      "filename": "providers/bb_dizikorea3.js",
+      "enabled": true,
+      "formats": [
+        "m3u8",
+        "mp4",
+        "hls"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=dizikorea.com&sz=128",
+      "contentLanguage": [
+        "tr"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "bb_dizilla",
+      "name": "Dizilla (bb)",
+      "description": "bigbull kaynağı — site araması + HLS/MP4 akışları (dizi).",
+      "version": "1.0.0",
+      "author": "bigbull/ymir",
+      "supportedTypes": [
+        "tv",
+        "series"
+      ],
+      "filename": "providers/bb_dizilla.js",
+      "enabled": true,
+      "formats": [
+        "m3u8",
+        "mp4",
+        "hls"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=dizilla.club&sz=128",
+      "contentLanguage": [
+        "tr"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "bb_dizimom",
+      "name": "DiziMom (bb)",
+      "description": "bigbull kaynağı — site araması + HLS/MP4 akışları (dizi).",
+      "version": "1.0.0",
+      "author": "bigbull/ymir",
+      "supportedTypes": [
+        "tv",
+        "series"
+      ],
+      "filename": "providers/bb_dizimom.js",
+      "enabled": true,
+      "formats": [
+        "m3u8",
+        "mp4",
+        "hls"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=dizimom.com&sz=128",
+      "contentLanguage": [
+        "tr"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "bb_dizipal",
+      "name": "DiziPal (bb)",
+      "description": "bigbull kaynağı — site araması + HLS/MP4 akışları (dizi).",
+      "version": "1.0.0",
+      "author": "bigbull/ymir",
+      "supportedTypes": [
+        "tv",
+        "series"
+      ],
+      "filename": "providers/bb_dizipal.js",
+      "enabled": true,
+      "formats": [
+        "m3u8",
+        "mp4",
+        "hls"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=dizipal.com&sz=128",
+      "contentLanguage": [
+        "tr"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "bb_diziyou",
+      "name": "DiziYou (bb)",
+      "description": "bigbull kaynağı — site araması + HLS/MP4 akışları (dizi).",
+      "version": "1.0.0",
+      "author": "bigbull/ymir",
+      "supportedTypes": [
+        "tv",
+        "series"
+      ],
+      "filename": "providers/bb_diziyou.js",
+      "enabled": true,
+      "formats": [
+        "m3u8",
+        "mp4",
+        "hls"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=diziyou.com&sz=128",
+      "contentLanguage": [
+        "tr"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
       "id": "bb_filmmodu",
-      "name": "FilmModu",
-      "description": "bigbull kaynağı (film) — site araması + HLS/MP4 akışları.",
+      "name": "FilmModu (bb)",
+      "description": "bigbull kaynağı — site araması + HLS/MP4 akışları (film).",
       "version": "1.0.0",
       "author": "bigbull/ymir",
       "supportedTypes": [
@@ -510,8 +740,8 @@
     },
     {
       "id": "bb_hdfilmcehennemi",
-      "name": "HDFilmCehennemi",
-      "description": "bigbull kaynağı (film) — site araması + HLS/MP4 akışları.",
+      "name": "HDFilmCehennemi (bb)",
+      "description": "bigbull kaynağı — site araması + HLS/MP4 akışları (film).",
       "version": "1.0.0",
       "author": "bigbull/ymir",
       "supportedTypes": [
@@ -532,8 +762,8 @@
     },
     {
       "id": "bb_jetfilmizle",
-      "name": "JetFilmizle",
-      "description": "bigbull kaynağı (film) — site araması + HLS/MP4 akışları.",
+      "name": "JetFilmizle (bb)",
+      "description": "bigbull kaynağı — site araması + HLS/MP4 akışları (film).",
       "version": "1.0.0",
       "author": "bigbull/ymir",
       "supportedTypes": [
@@ -553,31 +783,9 @@
       "supportsExternalPlayer": true
     },
     {
-      "id": "bb_yesilcamtv",
-      "name": "Yeşilçam TV",
-      "description": "bigbull kaynağı (film) — site araması + HLS/MP4 akışları.",
-      "version": "1.0.0",
-      "author": "bigbull/ymir",
-      "supportedTypes": [
-        "movie"
-      ],
-      "filename": "providers/bb_yesilcamtv.js",
-      "enabled": true,
-      "formats": [
-        "m3u8",
-        "mp4",
-        "hls"
-      ],
-      "logo": "https://www.google.com/s2/favicons?domain=yesilcamtv.com.tr&sz=128",
-      "contentLanguage": [
-        "tr"
-      ],
-      "supportsExternalPlayer": true
-    },
-    {
       "id": "bb_selcukflix",
-      "name": "SelcukFlix",
-      "description": "bigbull kaynağı (film) — site araması + HLS/MP4 akışları.",
+      "name": "SelcukFlix (bb)",
+      "description": "bigbull kaynağı — site araması + HLS/MP4 akışları (film).",
       "version": "1.0.0",
       "author": "bigbull/ymir",
       "supportedTypes": [
@@ -591,6 +799,120 @@
         "hls"
       ],
       "logo": "https://www.google.com/s2/favicons?domain=selcukflix.app&sz=128",
+      "contentLanguage": [
+        "tr"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "bb_setfilmizle",
+      "name": "SetFilmIzle (bb)",
+      "description": "bigbull kaynağı — site araması + HLS/MP4 akışları (dizi).",
+      "version": "1.0.0",
+      "author": "bigbull/ymir",
+      "supportedTypes": [
+        "tv",
+        "series"
+      ],
+      "filename": "providers/bb_setfilmizle.js",
+      "enabled": true,
+      "formats": [
+        "m3u8",
+        "mp4",
+        "hls"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=setfilmizle.ltd&sz=128",
+      "contentLanguage": [
+        "tr"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "bb_sezonlukdizi",
+      "name": "SezonlukDizi (bb)",
+      "description": "bigbull kaynağı — site araması + HLS/MP4 akışları (dizi).",
+      "version": "1.0.0",
+      "author": "bigbull/ymir",
+      "supportedTypes": [
+        "tv",
+        "series"
+      ],
+      "filename": "providers/bb_sezonlukdizi.js",
+      "enabled": true,
+      "formats": [
+        "m3u8",
+        "mp4",
+        "hls"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=sezonlukdizi.com&sz=128",
+      "contentLanguage": [
+        "tr"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "bb_webdramaturkey2",
+      "name": "WebDrama TR (bb)",
+      "description": "bigbull kaynağı — site araması + HLS/MP4 akışları (dizi).",
+      "version": "1.0.0",
+      "author": "bigbull/ymir",
+      "supportedTypes": [
+        "tv",
+        "series"
+      ],
+      "filename": "providers/bb_webdramaturkey2.js",
+      "enabled": true,
+      "formats": [
+        "m3u8",
+        "mp4",
+        "hls"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=webdrama.net&sz=128",
+      "contentLanguage": [
+        "tr"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "bb_yerlidiziler",
+      "name": "YerliDiziler (bb)",
+      "description": "bigbull kaynağı — site araması + HLS/MP4 akışları (dizi).",
+      "version": "1.0.0",
+      "author": "bigbull/ymir",
+      "supportedTypes": [
+        "tv",
+        "series"
+      ],
+      "filename": "providers/bb_yerlidiziler.js",
+      "enabled": true,
+      "formats": [
+        "m3u8",
+        "mp4",
+        "hls"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=yerlidiziler.com&sz=128",
+      "contentLanguage": [
+        "tr"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "bb_yesilcamtv",
+      "name": "Yeşilçam TV (bb)",
+      "description": "bigbull kaynağı — site araması + HLS/MP4 akışları (film).",
+      "version": "1.0.0",
+      "author": "bigbull/ymir",
+      "supportedTypes": [
+        "movie"
+      ],
+      "filename": "providers/bb_yesilcamtv.js",
+      "enabled": true,
+      "formats": [
+        "m3u8",
+        "mp4",
+        "hls"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=yesilcamtv.com.tr&sz=128",
       "contentLanguage": [
         "tr"
       ],

@@ -295,57 +295,53 @@ module.exports.getStreams = function (id, mediaType, season, episode) {
 
 
 /* ===================================================================
- *  Ymir adapter: catalog from bb-nuvio addon config + __alt__ bridge.
- *  Reuses the bb-nuvio getStreams above (resolves by title, no TMDB).
+ *  Ymir adapter (bb-nuvio): catalog from addon config (parsing mirrors
+ *  bigbull build.mjs), __alt__ title bridge into the bb getStreams above.
  * =================================================================== */
 ;(function () {
-  var __CFG = {
-  "id": "yesilcamtv",
-  "name": "Yeşilçam TV",
-  "type": "movie",
-  "url": "https://yesilcamtv.com.tr/",
-  "item": "<div class=\"movie-box\"[\\s\\S]*?class=\"film-ismi\">[\\s\\S]*?</a>",
-  "title": "class=\"film-ismi\">\\s*<a[^>]*>([^<]+)</a>",
-  "limit": 40
-};
+  var __CFG = {"id":"yesilcamtv","name":"Yeşilçam TV","type":"movie","url":"https://yesilcamtv.com.tr/","item":"<div class=\"movie-box\"[\\s\\S]*?class=\"film-ismi\">[\\s\\S]*?</a>","title":"class=\"film-ismi\">\\s*<a[^>]*>([^<]+)</a>","limit":40};
+  var __SERIES = false;
   var __UA = (typeof UA !== 'undefined' && UA) ? UA :
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36";
-  function __catFetch(u) {
+  function __fetch(u) {
     return fetch(u, { headers: { "User-Agent": __UA, "Accept-Language": "tr-TR,tr;q=0.9" } })
       .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status + " " + u); return r.text(); });
   }
-  function __pick(block, pat) { if (!pat) return null; var mm = new RegExp(pat).exec(block); return mm ? mm[1] : null; }
-  function __decode(s) {
-    return String(s)
-      .replace(/&amp;/g, "&").replace(/&#0?39;/g, "'").replace(/&apos;/g, "'")
-      .replace(/&quot;/g, '"').replace(/&lt;/g, "<").replace(/&gt;/g, ">")
-      .replace(/&#x([0-9a-fA-F]+);/g, function (_, h) { return String.fromCharCode(parseInt(h, 16)); })
+  var __ENT = { amp:"&", lt:"<", gt:">", quot:'"', apos:"'", nbsp:" ", ouml:"ö", uuml:"ü", Ouml:"Ö", Uuml:"Ü" };
+  function __stripTags(h) {
+    return String(h || "")
+      .replace(/<[^>]*>/g, " ")
+      .replace(/&([a-zA-Z]{2,8});/g, function (m, k) { return __ENT[k] != null ? __ENT[k] : m; })
+      .replace(/&#x([0-9a-fA-F]+);/g, function (_, x) { return String.fromCharCode(parseInt(x, 16)); })
       .replace(/&#(\d+);/g, function (_, d) { return String.fromCharCode(+d); })
-      .trim();
+      .replace(/\s+/g, " ").trim();
   }
-  var __isSeries = (__CFG.type === "series" || __CFG.type === "tv");
+  function __origin(u) { var m = /^(https?:\/\/[^/]+)/.exec(u); return m ? m[1] : ""; }
   async function getCatalog(args) {
     var q = args && args.query ? String(args.query).trim() : "";
-    // Search uses the provider's OWN site search via the __alt__ title bridge.
     if (q) {
       return { items: [{ id: "__alt__:" + encodeURIComponent(q), name: q, poster: null,
-        type: __isSeries ? "tv" : "movie" }] };
+        type: __SERIES ? "tv" : "movie" }] };
     }
-    var html = await __catFetch(__CFG.url);
-    if (__CFG.unescape) html = html.replace(/\\\//g, "/");
-    var items = [], seen = {}, re = new RegExp(__CFG.item, "g"), m;
-    while ((m = re.exec(html)) !== null) {
-      var block = m[0];
-      var t = __pick(block, __CFG.title);
-      if (!t) continue;
-      t = __decode(t);
-      if (__CFG.strip) t = t.replace(new RegExp(__CFG.strip), "").trim();
-      if (!t || seen[t]) continue;
-      seen[t] = 1;
-      var poster = __CFG.poster ? __pick(block, __CFG.poster) : null;
-      if (poster) poster = __decode(poster);
-      items.push({ id: "__alt__:" + encodeURIComponent(t), name: t, poster: poster || null,
-        type: __isSeries ? "tv" : "movie" });
+    var html = await __fetch(__CFG.url);
+    if (__CFG.unescape) html = html.replace(/\\"/g, '"');
+    var blocks = html.match(new RegExp(__CFG.item, "gi")) || [];
+    var titleRe = new RegExp(__CFG.title, "i");
+    var items = [], seen = {};
+    for (var i = 0; i < blocks.length; i++) {
+      var b = blocks[i];
+      var mm = titleRe.exec(b);
+      var title = mm ? __stripTags(mm[1]) : "";
+      if (__CFG.strip) title = title.replace(new RegExp(__CFG.strip, "i"), "").trim();
+      if (!title || title.length < 2) continue;
+      var key = title.toLowerCase();
+      if (seen[key]) continue; seen[key] = 1;
+      var poster = __CFG.poster ? ((new RegExp(__CFG.poster, "i").exec(b) || [])[1]) : null;
+      if (poster && /^data:/i.test(poster)) poster = null;
+      if (poster && poster.charAt(0) === "/") poster = __origin(__CFG.url) + poster;
+      if (poster) poster = __stripTags(poster);
+      items.push({ id: "__alt__:" + encodeURIComponent(title), name: title, poster: poster || null,
+        type: __SERIES ? "tv" : "movie" });
       if (__CFG.limit && items.length >= __CFG.limit) break;
       if (items.length >= 100) break;
     }
@@ -353,15 +349,32 @@ module.exports.getStreams = function (id, mediaType, season, episode) {
     return { items: items };
   }
   async function search(args) { return getCatalog(args); }
+
+  // Series: synthetic season/episode grid so episodes are navigable; the bb
+  // getStreams resolves whichever S/E actually exists on the site.
+  async function getMeta(args) {
+    var id = args && args.id;
+    var title = /^__alt__:/.test(String(id)) ? decodeURIComponent(String(id).slice(8)) : String(id || "");
+    var videos = [];
+    var SEASONS = 3, EP = 30;
+    for (var s = 1; s <= SEASONS; s++) {
+      for (var e = 1; e <= EP; e++) {
+        videos.push({ id: id, title: s + ". Sezon " + e + ". Bölüm", season: s, episode: e });
+      }
+    }
+    return { meta: { id: id, type: "series", name: title, videos: videos } };
+  }
+
   var __bbGetStreams = module.exports.getStreams;
   async function getStreams(tmdbId, mediaType, season, episode, url) {
     var id = url || tmdbId;
-    return __bbGetStreams(id, mediaType, season, episode);
+    return __bbGetStreams(id, __SERIES ? "tv" : "movie", season, episode);
   }
-  module.exports = { getCatalog: getCatalog, getStreams: getStreams, search: search };
+  var __exports = { getCatalog: getCatalog, getStreams: getStreams, search: search };
+  if (__SERIES) __exports.getMeta = getMeta;
+  module.exports = __exports;
   if (typeof globalThis !== 'undefined') {
-    globalThis.getCatalog = getCatalog;
-    globalThis.getStreams = getStreams;
-    globalThis.search = search;
+    globalThis.getCatalog = getCatalog; globalThis.getStreams = getStreams; globalThis.search = search;
+    if (__SERIES) globalThis.getMeta = getMeta;
   }
 })();

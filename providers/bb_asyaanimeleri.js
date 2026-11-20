@@ -1,0 +1,445 @@
+// @provider {"id":"asyaanimeleri", "name":"AsyaAnimeleri", "types":["tv"], "domain":"asyaanimeleri.top", "formats":["m3u8"], "description":"AsyaAnimeleri anime kaynaklari (rumble, vidmoly HLS).", "sample":"tt33501934:tv:1:1", "version":"1.0.13"}
+/**
+ * asyaanimeleri — Nuvio provider (bb-nuvio).
+ * Flow: Cinemeta title -> site search -> series -> episode -> mirror iframes -> rumble/vidmoly HLS.
+ */
+
+var UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36";
+var BASE = "https://asyaanimeleri.top";
+var B64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+function text(url, opts) {
+  var o = opts || {};
+  var headers = { "User-Agent": UA, "Accept-Language": "tr-TR,tr;q=0.9" };
+  if (o.referer) headers.Referer = o.referer;
+  if (o.headers) for (var k in o.headers) headers[k] = o.headers[k];
+  return fetch(url, { method: o.method || "GET", headers: headers, body: o.body })
+    .then(function (r) {
+      if (!r.ok) throw new Error("HTTP " + r.status + " " + url);
+      return r.text();
+    });
+}
+
+function first(pattern, body) {
+  var m = pattern.exec(String(body || ""));
+  return m ? m[1] : null;
+}
+
+function abs(base, href) {
+  if (!href) return null;
+  if (/^https?:/i.test(href)) return href;
+  var origin = /^(https?:\/\/[^/]+)/.exec(base);
+  if (href.indexOf("//") === 0) return "https:" + href;
+  if (href.charAt(0) === "/") return origin ? origin[1] + href : href;
+  return base.replace(/[^/]*$/, "") + href;
+}
+
+// Nuvio's QuickJS sandbox ships no base64 helper, so decode by hand.
+// Non-alphabet chars are skipped, so unpadded or padded payloads both work.
+function unbase64(s) {
+  var src = String(s || "").replace(/[^A-Za-z0-9+/]/g, "");
+  var out = "";
+  var buf = 0;
+  var bits = 0;
+  for (var i = 0; i < src.length; i++) {
+    var c = B64.indexOf(src.charAt(i));
+    if (c < 0) continue;
+    buf = (buf << 6) | c;
+    bits += 6;
+    if (bits >= 8) {
+      bits -= 8;
+      out += String.fromCharCode((buf >> bits) & 0xff);
+      buf &= (1 << bits) - 1;
+    }
+  }
+  return out;
+}
+
+function titleOf(id, mediaType) {
+  if (/^__alt__:/.test(String(id))) return Promise.resolve(decodeURIComponent(String(id).slice(8)));
+  var kind = mediaType === "tv" ? "series" : "movie";
+  return text("https://v3-cinemeta.strem.io/meta/" + kind + "/" + id + ".json")
+    .then(function (body) {
+      var meta = JSON.parse(body).meta || {};
+      return String(meta.name || "").trim();
+    })
+    .catch(function () {
+      return "";
+    });
+}
+
+function norm(s) {
+  return String(s || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+}
+
+function seriesLink(search, title) {
+  var re = /href="([^"]*\/series\/[^"?]+)"[^>]*title="([^"]*)"/g;
+  var want = norm(title);
+  var m;
+  while ((m = re.exec(search)) !== null) {
+    if (want && (norm(m[2]) === want || norm(m[2]).indexOf(want + " ") === 0)) return m[1];
+  }
+  return null;
+}
+
+function episodes(detail, want, wantEp) {
+  var links = [];
+  var seen = {};
+  var re = /href="([^"]*-bolum[^"]*)"/g;
+  var m;
+  while ((m = re.exec(detail || "")) !== null) {
+    var l = abs(BASE, m[1]);
+    if (l && !seen[l]) {
+      seen[l] = 1;
+      links.push(l);
+    }
+  }
+  var exact = null;
+  var byNum = null;
+  for (var i = 0; i < links.length; i++) {
+    if (parseInt(first(/-(\d+)-bolum/, links[i]), 10) !== wantEp) continue;
+    if (!byNum) byNum = links[i];
+    var sezon = parseInt(first(/-(\d+)-sezon-/, links[i]), 10) || 0;
+    if (!exact && (sezon === want || (!sezon && want === 1))) exact = links[i];
+  }
+  var out = [];
+  var take = [exact];
+  for (var j = 0; j < take.length && out.length < 3; j++) {
+    if (take[j] && out.indexOf(take[j]) === -1) out.push(take[j]);
+  }
+  return out;
+}
+
+function row(host, url, hls, headers) {
+  return {
+    name: "asyaanimeleri",
+    title: "AsyaAnimeleri - " + host + (hls ? " [HLS]" : " [MP4]"),
+    url: url,
+    quality: hls ? "1080p" : "720p",
+    headers: headers,
+    subtitles: []
+  };
+}
+
+// Mirrors are picked per episode; only hosts whose player HTML carries a real
+// media URL are kept, never a bare embed page.
+function streamFor(embed, episodeUrl) {
+  var host = (first(/^https?:\/\/([^/]+)/, embed) || "").toLowerCase();
+  if (/rumble\.com\/embed\//.test(embed)) {
+    return text(embed, { referer: episodeUrl }).then(function (body) {
+      var url = first(/"hls"\s*:\s*\{\s*"url"\s*:\s*"([^"]+)"/, body);
+      return url ? [row("rumble", url.replace(/\\\//g, "/"), true, { Referer: "https://rumble.com/" })] : [];
+    });
+  }
+  if (/vidmoly\./.test(host)) {
+    return text(embed, { referer: episodeUrl }).then(function (body) {
+      var url = first(/sources\s*:\s*\[\s*\{[^}]*?file\s*:\s*["']([^"']+)/, body);
+      if (!url) return [];
+      url = url.replace(/\\\//g, "/");
+      return [row("vidmoly", url, /\.m3u8/i.test(url), { Referer: embed })];
+    });
+  }
+  if (/\.(m3u8|mp4)(\?|$)/i.test(embed)) return Promise.resolve([row("direct", embed, /\.m3u8/i.test(embed), {})]);
+  return Promise.resolve([]);
+}
+
+function mirrors(page, episodeUrl) {
+  var embeds = [];
+  var seen = {};
+  var re = /<iframe[^>]+src="([^"]+)"/gi;
+  var m;
+  while ((m = re.exec(page)) !== null) embeds.push(m[1]);
+  var optRe = /<option[^>]+value="([^"]+)"/gi;
+  while ((m = optRe.exec(page)) !== null) {
+    var decoded = unbase64(m[1]);
+    if (decoded.indexOf("<iframe") === -1) continue;
+    var srcRe = /src=["']([^"']+)/gi;
+    var s;
+    while ((s = srcRe.exec(decoded)) !== null) embeds.push(s[1]);
+  }
+  var jobs = [];
+  for (var i = 0; i < embeds.length; i++) {
+    var url = abs(episodeUrl, embeds[i]);
+    if (!url || seen[url]) continue;
+    seen[url] = 1;
+    jobs.push(streamFor(url, episodeUrl).catch(function () { return []; }));
+  }
+  return Promise.all(jobs).then(function (lists) {
+    var out = [];
+    var have = {};
+    for (var j = 0; j < lists.length; j++) {
+      for (var k = 0; k < lists[j].length; k++) {
+        var r = lists[j][k];
+        if (!have[r.url]) {
+          have[r.url] = 1;
+          out.push(r);
+        }
+      }
+    }
+    return out;
+  });
+}
+
+function tryEach(list, i) {
+  if (i >= list.length) return Promise.resolve([]);
+  return text(list[i])
+    .then(function (page) {
+      return mirrors(page, list[i]);
+    })
+    .then(function (rows) {
+      return rows.length ? rows : tryEach(list, i + 1);
+    })
+    .catch(function () {
+      return tryEach(list, i + 1);
+    });
+}
+
+function getStreams(tmdbId, mediaType, season, episode) {
+  var want = parseInt(season, 10) || 1;
+  var wantEp = parseInt(episode, 10) || 1;
+
+  var title = "";
+  return titleOf(tmdbId, mediaType)
+    .then(function (t) {
+      title = t;
+      if (!title) return null;
+      return text(BASE + "/?s=" + encodeURIComponent(title));
+    })
+    .then(function (search) {
+      if (!search) return null;
+      var link = seriesLink(search, title);
+      if (!link) return null;
+      return text(abs(BASE, link));
+    })
+    .then(function (detail) {
+      if (!detail) return [];
+      var cands = episodes(detail, want, wantEp);
+      if (!cands.length) return [];
+      return tryEach(cands, 0);
+    })
+    .catch(function (e) {
+      console.log("[bb-nuvio][asyaanimeleri] " + (e && e.message));
+      return [];
+    });
+}
+
+module.exports = { getStreams };
+
+
+
+/* NuvioMobile always calls getStreams with args.tmdbId (JsBindings.kt); the
+   value is a numeric TMDB id after TmdbService.ensureTmdbId. Resolve it to
+   IMDb so the existing Cinemeta/title flow keeps working. */
+var __origGetStreams = module.exports.getStreams;
+module.exports.getStreams = function (id, mediaType, season, episode) {
+  var raw = String(id || "");
+  if (!/^\d+$/.test(raw)) return __origGetStreams(raw, mediaType, season, episode);
+  var tv = mediaType !== "movie";
+  var headers = { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36", "Accept": "application/json" };
+  var key = typeof TMDB_API_KEY !== "undefined" ? TMDB_API_KEY : "";
+  var api = "https://www.wikidata.org/w/api.php?format=json";
+  var prop = tv ? "P4983" : "P4947";
+  function fromTmdb() {
+    if (!key) return Promise.resolve("");
+    return fetch("https://api.themoviedb.org/3/" + (tv ? "tv" : "movie") + "/" + raw + "/external_ids?api_key=" + encodeURIComponent(key), { headers: headers })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (json) { return String((json && json.imdb_id) || ""); })
+      .catch(function () { return ""; });
+  }
+  function fromWikidata() {
+    return fetch(api + "&action=query&list=search&srlimit=1&srsearch=" + encodeURIComponent("haswbstatement:" + prop + "=" + raw), { headers: headers })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (json) {
+        var hits = (json && json.query && json.query.search) || [];
+        if (!hits.length) return "";
+        return fetch(api + "&action=wbgetentities&props=claims&ids=" + hits[0].title, { headers: headers });
+      })
+      .then(function (r) { return r && r.ok ? r.json() : null; })
+      .then(function (json) {
+        var entities = (json && json.entities) || {};
+        for (var entity in entities) {
+          var rows = ((entities[entity] || {}).claims || {}).P345 || [];
+          for (var i = 0; i < rows.length; i++) {
+            var value = rows[i] && rows[i].mainsnak && rows[i].mainsnak.datavalue && rows[i].mainsnak.datavalue.value;
+            if (/^tt\d+$/.test(String(value || ""))) return value;
+          }
+        }
+        return "";
+      })
+      .catch(function () { return ""; });
+  }
+  return fromTmdb().then(function (imdb) { return imdb || fromWikidata(); }).then(function (imdb) {
+    return __origGetStreams(imdb || raw, mediaType, season, episode);
+  }).catch(function () { return []; });
+};
+
+/* Cinemeta basligi yerellestirir ("Gibi" -> "As If"); sonuc bossa Wikidata TR/EN basliklariyla yeniden dene. */
+function __altTitles(raw, mediaType) {
+  var h = { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36", "Accept": "application/json" };
+  var api = "https://www.wikidata.org/w/api.php?format=json";
+  var stmt = /^tt\d+$/.test(raw) ? "P345=" + raw : (mediaType === "movie" ? "P4947=" : "P4983=") + raw;
+  var wd = fetch(api + "&action=query&list=search&srlimit=1&srsearch=" + encodeURIComponent("haswbstatement:" + stmt), { headers: h })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (j) {
+      var hits = (j && j.query && j.query.search) || [];
+      if (!hits.length) return null;
+      return fetch(api + "&action=wbgetentities&props=labels|aliases&languages=tr|en&ids=" + hits[0].title, { headers: h }).then(function (r) { return r.ok ? r.json() : null; });
+    })
+    .then(function (j) {
+      var res = [], ents = (j && j.entities) || {}, k, l, a, i;
+      for (k in ents) {
+        l = ents[k].labels || {}; a = ents[k].aliases || {};
+        if (l.tr && l.tr.value) res.push(l.tr.value);
+        if (l.en && l.en.value) res.push(l.en.value);
+        for (i = 0; i < (a.tr || []).length && i < 2; i++) res.push(a.tr[i].value);
+      }
+      return res;
+    }).catch(function () { return []; });
+  var imdb = /^tt\d+$/.test(raw)
+    ? fetch("https://v3.sg.media-imdb.com/suggestion/t/" + raw + ".json", { headers: h })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (j) { return (j && j.d && j.d[0] && j.d[0].l) ? [j.d[0].l] : []; })
+        .catch(function () { return []; })
+    : Promise.resolve([]);
+  var tvm = /^tt\d+$/.test(raw) && mediaType !== "movie"
+    ? fetch("https://api.tvmaze.com/lookup/shows?imdb=" + raw, { headers: h })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (j) { return (j && j.name) ? [j.name] : []; })
+        .catch(function () { return []; })
+    : Promise.resolve([]);
+  return Promise.all([wd, imdb, tvm]).then(function (lists) {
+    var out = [], seen = {};
+    for (var i = 0; i < lists.length; i++) {
+      for (var j = 0; j < lists[i].length; j++) {
+        var v = String(lists[i][j] || "").replace(/\s*\([^)]*\)\s*$/, "").trim();
+        if (v && !seen[v.toLowerCase()]) { seen[v.toLowerCase()] = 1; out.push(v); }
+      }
+    }
+    return out;
+  });
+}
+var __cinemetaGetStreams = module.exports.getStreams;
+module.exports.getStreams = function (id, mediaType, season, episode) {
+  var raw = String(id || "");
+  return __cinemetaGetStreams(raw, mediaType, season, episode).then(function (streams) {
+    if ((streams && streams.length) || /^__alt__:/.test(raw)) return streams || [];
+    return __altTitles(raw, mediaType).then(function (titles) {
+      var chain = Promise.resolve([]);
+      titles.forEach(function (t) {
+        chain = chain.then(function (out) {
+          return out.length ? out : __cinemetaGetStreams("__alt__:" + encodeURIComponent(t), mediaType, season, episode);
+        });
+      });
+      return chain;
+    });
+  }).catch(function () { return []; });
+};
+
+/* Dil etiketi (AGENTS.md): Nuvio karti "quality \u2022 ..." satirini gosterir; dil etiketi kalitenin yanina yazilir.
+   Kanit: baslikta dublaj/altyazi, akisa eklenmis altyazi dosyasi ya da sitenin yalniz altyazili olmasi. Kanit yoksa etiket yok. */
+var __subOnly = true;
+var __langLabeled = module.exports.getStreams;
+module.exports.getStreams = function (id, mediaType, season, episode) {
+  return __langLabeled.apply(this, arguments).then(function (streams) {
+    return (streams || []).map(function (s) {
+      if (!s) return s;
+      var hay = String(s.title || "") + " " + String(s.name || "");
+      var tags = [];
+      if (/dublaj/i.test(hay)) tags.push("TR Dublaj");
+      if (/altyaz/i.test(hay) || (s.subtitles && s.subtitles.length) || (!tags.length && __subOnly)) tags.push("Altyaz\u0131l\u0131");
+      if (!tags.length) return s;
+      var q = String(s.quality || "").replace(/\s*\u2022.*$/, "") || "auto";
+      s.quality = q + " \u2022 " + tags.join(" \u2022 ");
+      return s;
+    });
+  });
+};
+
+
+/* ===================================================================
+ *  Ymir adapter (bb-nuvio): catalog from addon config (parsing mirrors
+ *  bigbull build.mjs), __alt__ title bridge into the bb getStreams above.
+ * =================================================================== */
+;(function () {
+  var __CFG = {"id":"asyaanimeleri","name":"Asya Animeleri","type":"series","url":"https://asyaanimeleri.top/seri/","item":"<article[^>]*class=\"bs\"[\\s\\S]*?</article>","title":"title=\"(?:&#8220;)?([^\"]+?)(?:&#8221;)?\""};
+  var __SERIES = true;
+  var __UA = (typeof UA !== 'undefined' && UA) ? UA :
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36";
+  function __fetch(u) {
+    return fetch(u, { headers: { "User-Agent": __UA, "Accept-Language": "tr-TR,tr;q=0.9" } })
+      .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status + " " + u); return r.text(); });
+  }
+  var __ENT = { amp:"&", lt:"<", gt:">", quot:'"', apos:"'", nbsp:" ", ouml:"ö", uuml:"ü", Ouml:"Ö", Uuml:"Ü" };
+  function __stripTags(h) {
+    return String(h || "")
+      .replace(/<[^>]*>/g, " ")
+      .replace(/&([a-zA-Z]{2,8});/g, function (m, k) { return __ENT[k] != null ? __ENT[k] : m; })
+      .replace(/&#x([0-9a-fA-F]+);/g, function (_, x) { return String.fromCharCode(parseInt(x, 16)); })
+      .replace(/&#(\d+);/g, function (_, d) { return String.fromCharCode(+d); })
+      .replace(/\s+/g, " ").trim();
+  }
+  function __origin(u) { var m = /^(https?:\/\/[^/]+)/.exec(u); return m ? m[1] : ""; }
+  async function getCatalog(args) {
+    var q = args && args.query ? String(args.query).trim() : "";
+    if (q) {
+      return { items: [{ id: "__alt__:" + encodeURIComponent(q), name: q, poster: null,
+        type: __SERIES ? "tv" : "movie" }] };
+    }
+    var html = await __fetch(__CFG.url);
+    if (__CFG.unescape) html = html.replace(/\\"/g, '"');
+    var blocks = html.match(new RegExp(__CFG.item, "gi")) || [];
+    var titleRe = new RegExp(__CFG.title, "i");
+    var items = [], seen = {};
+    for (var i = 0; i < blocks.length; i++) {
+      var b = blocks[i];
+      var mm = titleRe.exec(b);
+      var title = mm ? __stripTags(mm[1]) : "";
+      if (__CFG.strip) title = title.replace(new RegExp(__CFG.strip, "i"), "").trim();
+      if (!title || title.length < 2) continue;
+      var key = title.toLowerCase();
+      if (seen[key]) continue; seen[key] = 1;
+      var poster = __CFG.poster ? ((new RegExp(__CFG.poster, "i").exec(b) || [])[1]) : null;
+      if (poster && /^data:/i.test(poster)) poster = null;
+      if (poster && poster.charAt(0) === "/") poster = __origin(__CFG.url) + poster;
+      if (poster) poster = __stripTags(poster);
+      items.push({ id: "__alt__:" + encodeURIComponent(title), name: title, poster: poster || null,
+        type: __SERIES ? "tv" : "movie" });
+      if (__CFG.limit && items.length >= __CFG.limit) break;
+      if (items.length >= 100) break;
+    }
+    if (!items.length) throw new Error("katalog boş: item regex eşleşmedi (" + __CFG.url + ")");
+    return { items: items };
+  }
+  async function search(args) { return getCatalog(args); }
+
+  // Series: synthetic season/episode grid so episodes are navigable; the bb
+  // getStreams resolves whichever S/E actually exists on the site.
+  async function getMeta(args) {
+    var id = args && args.id;
+    var title = /^__alt__:/.test(String(id)) ? decodeURIComponent(String(id).slice(8)) : String(id || "");
+    var videos = [];
+    var SEASONS = 3, EP = 30;
+    for (var s = 1; s <= SEASONS; s++) {
+      for (var e = 1; e <= EP; e++) {
+        videos.push({ id: id, title: s + ". Sezon " + e + ". Bölüm", season: s, episode: e });
+      }
+    }
+    return { meta: { id: id, type: "series", name: title, videos: videos } };
+  }
+
+  var __bbGetStreams = module.exports.getStreams;
+  async function getStreams(tmdbId, mediaType, season, episode, url) {
+    var id = url || tmdbId;
+    return __bbGetStreams(id, __SERIES ? "tv" : "movie", season, episode);
+  }
+  var __exports = { getCatalog: getCatalog, getStreams: getStreams, search: search };
+  if (__SERIES) __exports.getMeta = getMeta;
+  module.exports = __exports;
+  if (typeof globalThis !== 'undefined') {
+    globalThis.getCatalog = getCatalog; globalThis.getStreams = getStreams; globalThis.search = search;
+    if (__SERIES) globalThis.getMeta = getMeta;
+  }
+})();
