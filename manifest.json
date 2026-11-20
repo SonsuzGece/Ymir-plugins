@@ -778,29 +778,6 @@
       "supportsExternalPlayer": true
     },
     {
-      "id": "bb_setfilmizle",
-      "name": "SetFilmIzle (bb)",
-      "description": "bigbull kaynağı — site araması + HLS/MP4 akışları (dizi).",
-      "version": "1.0.0",
-      "author": "bigbull/ymir",
-      "supportedTypes": [
-        "tv",
-        "series"
-      ],
-      "filename": "providers/bb_setfilmizle.js",
-      "enabled": true,
-      "formats": [
-        "m3u8",
-        "mp4",
-        "hls"
-      ],
-      "logo": "https://www.google.com/s2/favicons?domain=setfilmizle.ltd&sz=128",
-      "contentLanguage": [
-        "tr"
-      ],
-      "supportsExternalPlayer": true
-    },
-    {
       "id": "bb_sezonlukdizi",
       "name": "SezonlukDizi (bb)",
       "description": "bigbull kaynağı — site araması + HLS/MP4 akışları (dizi).",
@@ -910,6 +887,29 @@
         "hls"
       ],
       "logo": "https://www.google.com/s2/favicons?domain=rectv.me&sz=128",
+      "contentLanguage": [
+        "tr"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "kekik_setfilmizle",
+      "name": "SetFilmIzle",
+      "description": "SetFilmIzle — film+dizi (Kekik CloudStream portu, SetPlay/ExPlay).",
+      "version": "1.0.0",
+      "author": "kekik/ymir",
+      "supportedTypes": [
+        "movie",
+        "tv",
+        "series"
+      ],
+      "filename": "providers/kekik_setfilmizle.js",
+      "enabled": true,
+      "formats": [
+        "m3u8",
+        "hls"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=setfilmizle.nl&sz=128",
       "contentLanguage": [
         "tr"
       ],
