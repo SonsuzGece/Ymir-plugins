@@ -1,0 +1,600 @@
+{
+  "id": "anthology",
+  "name": "Anthology",
+  "version": "1.8.39",
+  "author": "falsisdev",
+  "description": "Anthology - Türkçe Dizi, Film, Anime ve Canlı TV/Spor Eklenti Deposu",
+  "scrapers": [
+    {
+      "id": "sinewix",
+      "name": "SineWix",
+      "description": "5000+ HD film, dizi ve anime - Türkçe dublaj & altyazı, 1080p çift ses direct MKV.",
+      "version": "1.8.39",
+      "author": "falsisdev",
+      "supportedTypes": [
+        "movie",
+        "tv"
+      ],
+      "filename": "providers/sinewix.js",
+      "enabled": false,
+      "formats": [
+        "mp4",
+        "mkv"
+      ],
+      "logo": "https://play-lh.googleusercontent.com/brwGNmr7IjA_MKk_TTPs0va10hdKE_bD_a1lnKoiMuCayW98EHpRv55edA6aEoJlmwfX=w240-h480",
+      "contentLanguage": [
+        "tr"
+      ],
+      "catalogs": [
+        {
+          "type": "movie",
+          "id": "anthology_sinewix_movies",
+          "name": "SineWix — Popüler Filmler",
+          "extra": [
+            {
+              "name": "search",
+              "isRequired": false
+            }
+          ]
+        },
+        {
+          "type": "tv",
+          "id": "anthology_sinewix_series",
+          "name": "SineWix — Popüler Diziler",
+          "extra": [
+            {
+              "name": "search",
+              "isRequired": false
+            }
+          ]
+        }
+      ],
+      "resources": [
+        "catalog",
+        "meta",
+        "stream"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "animecix",
+      "name": "AnimeciX",
+      "description": "TauVideo altyapısıyla binlerce anime bölümü (1080p, 720p, 480p direct MP4).",
+      "version": "1.8.39",
+      "author": "falsisdev",
+      "supportedTypes": [
+        "tv",
+        "movie"
+      ],
+      "filename": "providers/animecix.js",
+      "enabled": true,
+      "formats": [
+        "mp4"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=animecix.tv&sz=128",
+      "contentLanguage": [
+        "tr"
+      ],
+      "catalogs": [
+        {
+          "type": "tv",
+          "id": "anthology_animecix",
+          "name": "AnimeciX — Popüler Animeler",
+          "extra": [
+            {
+              "name": "search",
+              "isRequired": false
+            }
+          ]
+        }
+      ],
+      "resources": [
+        "catalog",
+        "meta",
+        "stream"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "anizium",
+      "name": "Anizium",
+      "description": "4K & 1080p Türkçe Dublaj ve Altyazılı Anime Kaynağı (Doğrudan MP4 + WebVTT).",
+      "version": "1.8.39",
+      "author": "falsisdev",
+      "supportedTypes": [
+        "tv",
+        "movie",
+        "anime"
+      ],
+      "filename": "providers/anizium.js",
+      "enabled": true,
+      "formats": [
+        "mp4"
+      ],
+      "logo": "https://raw.githubusercontent.com/falsisdev/anthology/main/assets/anizium.png",
+      "contentLanguage": [
+        "tr",
+        "ja"
+      ],
+      "catalogs": [
+        {
+          "type": "tv",
+          "id": "anthology_anizium",
+          "name": "Anizium — Popüler Animeler",
+          "extra": [
+            {
+              "name": "search",
+              "isRequired": false
+            }
+          ]
+        }
+      ],
+      "resources": [
+        "catalog",
+        "meta",
+        "stream",
+        "subtitles"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "asyaanimeleri",
+      "name": "AsyaAnimeleri",
+      "description": "Anime ve donghua arşivi — Sibnet, Ok.ru, Mail.ru ve Rumble üzerinden 1080p doğrudan MP4 ve HLS akışları.",
+      "version": "1.8.39",
+      "author": "falsisdev",
+      "supportedTypes": [
+        "tv",
+        "movie"
+      ],
+      "filename": "providers/asyaanimeleri.js",
+      "enabled": true,
+      "formats": [
+        "mp4",
+        "hls",
+        "m3u8"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=asyaanimeleri.top&sz=128",
+      "contentLanguage": [
+        "tr"
+      ],
+      "catalogs": [
+        {
+          "type": "tv",
+          "id": "anthology_asyaanimeleri",
+          "name": "AsyaAnimeleri — Popüler Animeler",
+          "extra": [
+            {
+              "name": "search",
+              "isRequired": false
+            }
+          ]
+        }
+      ],
+      "resources": [
+        "catalog",
+        "meta",
+        "stream"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "diziboxizle",
+      "name": "DiziBoxİzle",
+      "description": "Güncel yabancı dizi arşivi — VidMoly ve Ok.ru üzerinden 1080p doğrudan HLS ve MP4 akışları.",
+      "version": "1.8.39",
+      "author": "falsisdev",
+      "supportedTypes": [
+        "movie",
+        "tv"
+      ],
+      "filename": "providers/diziboxizle.js",
+      "enabled": true,
+      "formats": [
+        "mp4",
+        "hls",
+        "m3u8"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=diziboxizle.com&sz=128",
+      "contentLanguage": [
+        "tr"
+      ],
+      "catalogs": [
+        {
+          "type": "tv",
+          "id": "anthology_diziboxizle",
+          "name": "DiziBoxİzle — Yabancı Diziler",
+          "extra": [
+            {
+              "name": "search",
+              "isRequired": false
+            }
+          ]
+        }
+      ],
+      "resources": [
+        "catalog",
+        "meta",
+        "stream"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "ddizi",
+      "name": "DDizi",
+      "description": "Yerli dizi arşivi, güncel bölümler kataloğu ve doğrudan Ciner/Yandex CDN MP4/HLS akışları.",
+      "version": "1.8.39",
+      "author": "falsisdev",
+      "supportedTypes": [
+        "movie",
+        "tv"
+      ],
+      "filename": "providers/ddizi.js",
+      "enabled": true,
+      "formats": [
+        "mp4",
+        "hls",
+        "m3u8"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=ddizi.im&sz=128",
+      "catalogs": [
+        {
+          "type": "tv",
+          "id": "anthology_ddizi",
+          "name": "DDizi — Popüler Yerli Diziler",
+          "extra": [
+            {
+              "name": "search",
+              "isRequired": false
+            }
+          ]
+        }
+      ],
+      "resources": [
+        "catalog",
+        "meta",
+        "stream"
+      ],
+      "contentLanguage": [
+        "tr"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "yabancidizi",
+      "name": "YabancıDizi",
+      "description": "YabancıDizi arşivi üzerinden Türkçe Dublaj ve Altyazılı VidMoly 1080p master HLS akışları.",
+      "version": "1.8.39",
+      "author": "falsisdev",
+      "supportedTypes": [
+        "movie",
+        "tv"
+      ],
+      "filename": "providers/yabancidizi.js",
+      "enabled": true,
+      "formats": [
+        "hls",
+        "m3u8"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=yabancidizi.news&sz=128",
+      "contentLanguage": [
+        "tr",
+        "en"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "setfilmizle",
+      "name": "SetFilmIzle",
+      "description": "SetFilmIzle arşivi üzerinden FastPlay 1080p HLS master akışları ve TR/EN altyazılar (film + dizi).",
+      "version": "1.8.39",
+      "author": "falsisdev",
+      "supportedTypes": [
+        "movie",
+        "tv"
+      ],
+      "filename": "providers/setfilmizle.js",
+      "enabled": true,
+      "formats": [
+        "hls",
+        "m3u8"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=setfilmizle.ltd&sz=128",
+      "catalogs": [
+        {
+          "type": "movie",
+          "id": "anthology_setfilmizle_movies",
+          "name": "SetFilmIzle — Popüler Filmler",
+          "extra": [
+            {
+              "name": "search",
+              "isRequired": false
+            }
+          ]
+        },
+        {
+          "type": "tv",
+          "id": "anthology_setfilmizle_series",
+          "name": "SetFilmIzle — Popüler Diziler",
+          "extra": [
+            {
+              "name": "search",
+              "isRequired": false
+            }
+          ]
+        }
+      ],
+      "resources": [
+        "catalog",
+        "meta",
+        "stream"
+      ],
+      "contentLanguage": [
+        "tr"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "hdfilmdelisi",
+      "name": "HDFilmDelisi",
+      "description": "HDFilmDelisi JSON API arşivi üzerinden VidMody 1080p HLS akışları.",
+      "version": "1.8.39",
+      "author": "falsisdev",
+      "supportedTypes": [
+        "movie",
+        "tv"
+      ],
+      "filename": "providers/hdfilmdelisi.js",
+      "enabled": true,
+      "formats": [
+        "hls",
+        "m3u8"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=hdfilmdelisi.one&sz=128",
+      "catalogs": [
+        {
+          "type": "movie",
+          "id": "anthology_hdfilmdelisi_movies",
+          "name": "HDFilmDelisi — Son Filmler",
+          "extra": [
+            {
+              "name": "search",
+              "isRequired": false
+            }
+          ]
+        }
+      ],
+      "resources": [
+        "catalog",
+        "meta",
+        "stream"
+      ],
+      "contentLanguage": [
+        "tr"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "hdfilmizle",
+      "name": "HDFilmIzle",
+      "description": "HDFilmIzle (Ink/Vip) arşivi üzerinden FastPlay 1080p HLS master akışları ve TR/EN altyazılar.",
+      "version": "1.8.39",
+      "author": "falsisdev",
+      "supportedTypes": [
+        "movie",
+        "tv"
+      ],
+      "filename": "providers/hdfilmizle.js",
+      "enabled": true,
+      "formats": [
+        "hls",
+        "m3u8"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=hdfilmizle.ink&sz=128",
+      "catalogs": [
+        {
+          "type": "movie",
+          "id": "anthology_hdfilmizle_movies",
+          "name": "HDFilmIzle — Popüler Filmler",
+          "extra": [
+            {
+              "name": "search",
+              "isRequired": false
+            }
+          ]
+        }
+      ],
+      "resources": [
+        "catalog",
+        "meta",
+        "stream"
+      ],
+      "contentLanguage": [
+        "tr"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "diziwatch",
+      "name": "DiziWatch",
+      "description": "diziwatch.ac arşivi üzerinden güncel anime ve yabancı dizi akışları sunar.",
+      "version": "1.8.39",
+      "author": "falsisdev",
+      "supportedTypes": [
+        "movie",
+        "tv",
+        "series",
+        "anime"
+      ],
+      "filename": "providers/diziwatch.js",
+      "enabled": true,
+      "formats": [
+        "hls",
+        "mp4",
+        "m3u8"
+      ],
+      "logo": "https://raw.githubusercontent.com/falsisdev/anthology/main/assets/logo_1_transparent.png",
+      "contentLanguage": [
+        "tr"
+      ],
+      "resources": [
+        "catalog",
+        "meta",
+        "stream"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "seicode",
+      "name": "SeiCode",
+      "description": "SeiCode anime platformu — TauVideo, Ok.ru, Sibnet, VidMoly ve MP4Upload üzerinden 1080p doğrudan MP4 ve HLS akışları.",
+      "version": "1.8.39",
+      "author": "falsisdev",
+      "supportedTypes": [
+        "tv",
+        "movie",
+        "anime"
+      ],
+      "filename": "providers/seicode.js",
+      "enabled": true,
+      "formats": [
+        "mp4",
+        "hls",
+        "m3u8"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=seicode.net&sz=128",
+      "contentLanguage": [
+        "tr"
+      ],
+      "catalogs": [
+        {
+          "type": "tv",
+          "id": "anthology_seicode",
+          "name": "SeiCode — Popüler Animeler",
+          "extra": [
+            {
+              "name": "search",
+              "isRequired": false
+            }
+          ]
+        }
+      ],
+      "resources": [
+        "catalog",
+        "meta",
+        "stream"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "bb_filmmodu",
+      "name": "FilmModu",
+      "description": "bigbull kaynağı (film) — site araması + HLS/MP4 akışları.",
+      "version": "1.0.0",
+      "author": "bigbull/ymir",
+      "supportedTypes": [
+        "movie"
+      ],
+      "filename": "providers/bb_filmmodu.js",
+      "enabled": true,
+      "formats": [
+        "m3u8",
+        "mp4",
+        "hls"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=filmmodu.icu&sz=128",
+      "contentLanguage": [
+        "tr"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "bb_hdfilmcehennemi",
+      "name": "HDFilmCehennemi",
+      "description": "bigbull kaynağı (film) — site araması + HLS/MP4 akışları.",
+      "version": "1.0.0",
+      "author": "bigbull/ymir",
+      "supportedTypes": [
+        "movie"
+      ],
+      "filename": "providers/bb_hdfilmcehennemi.js",
+      "enabled": true,
+      "formats": [
+        "m3u8",
+        "mp4",
+        "hls"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=hdfilmcehennemi.nl&sz=128",
+      "contentLanguage": [
+        "tr"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "bb_jetfilmizle",
+      "name": "JetFilmizle",
+      "description": "bigbull kaynağı (film) — site araması + HLS/MP4 akışları.",
+      "version": "1.0.0",
+      "author": "bigbull/ymir",
+      "supportedTypes": [
+        "movie"
+      ],
+      "filename": "providers/bb_jetfilmizle.js",
+      "enabled": true,
+      "formats": [
+        "m3u8",
+        "mp4",
+        "hls"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=jetfilmizle.app&sz=128",
+      "contentLanguage": [
+        "tr"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "bb_yesilcamtv",
+      "name": "Yeşilçam TV",
+      "description": "bigbull kaynağı (film) — site araması + HLS/MP4 akışları.",
+      "version": "1.0.0",
+      "author": "bigbull/ymir",
+      "supportedTypes": [
+        "movie"
+      ],
+      "filename": "providers/bb_yesilcamtv.js",
+      "enabled": true,
+      "formats": [
+        "m3u8",
+        "mp4",
+        "hls"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=yesilcamtv.com.tr&sz=128",
+      "contentLanguage": [
+        "tr"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "bb_selcukflix",
+      "name": "SelcukFlix",
+      "description": "bigbull kaynağı (film) — site araması + HLS/MP4 akışları.",
+      "version": "1.0.0",
+      "author": "bigbull/ymir",
+      "supportedTypes": [
+        "movie"
+      ],
+      "filename": "providers/bb_selcukflix.js",
+      "enabled": true,
+      "formats": [
+        "m3u8",
+        "mp4",
+        "hls"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=selcukflix.app&sz=128",
+      "contentLanguage": [
+        "tr"
+      ],
+      "supportsExternalPlayer": true
+    }
+  ]
+}
