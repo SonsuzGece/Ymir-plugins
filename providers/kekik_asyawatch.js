@@ -66,7 +66,7 @@ async function getMeta(args) {
   var url = id;
   var r = await get(url, BASE + "/");
   var html = r.text;
-  var ld = firstLd(html, "") || {};
+  var ld = firstLd(html, "TVSeries") || firstLd(html, "Movie") || firstLd(html, "") || {};
   var title = ld.name || "";
   if (!title) { var tm = html.match(/<meta[^>]+property="og:title"[^>]+content="([^"]*)"/i) || html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i); title = tm ? tm[1].replace(/<[^>]+>/g, "").trim() : ""; }
   var poster = ""; var pm = html.match(/<meta[^>]+property="og:image"[^>]+content="([^"]*)"/i); if (pm) poster = pm[1];
@@ -81,6 +81,15 @@ async function getMeta(args) {
       var nm = e.name || "Bölüm";
       var num = (nm.match(/(\d+)/) || [])[1];
       videos.push({ id: href, title: nm, season: 1, episode: num ? parseInt(num, 10) : (videos.length + 1) });
+    }
+  }
+  if (!videos.length) {
+    var bre = /<a[^>]+href=["']([^"']*\/(?:bolum-|sezon-)[^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi, bm;
+    while ((bm = bre.exec(html)) !== null) {
+      var bh = fixUrl(bm[1]);
+      if (seen[bh]) continue; seen[bh] = 1;
+      var bn = (bh.match(/bolum-(\d+)/i) || [])[1];
+      videos.push({ id: bh, title: bm[2].replace(/<[^>]+>/g, "").trim() || ("Bölüm " + (bn || (videos.length + 1))), season: 1, episode: bn ? parseInt(bn, 10) : (videos.length + 1) });
     }
   }
   if (!videos.length) videos.push({ id: url, title: title || "Film", season: 1, episode: 1 });

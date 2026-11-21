@@ -301,7 +301,9 @@ function job(source, key, entry, referer) {
 function getStreams(tmdbId, mediaType) {
   var filmUrl = null;
 
-  return imdbId(tmdbId, mediaType)
+  var directHref = (typeof tmdbId === "string" && tmdbId.indexOf("__href__:") === 0)
+    ? decodeURIComponent(tmdbId.slice(9)) : null;
+  return (directHref ? Promise.resolve(directHref) : imdbId(tmdbId, mediaType)
     .then(function (id) {
       if (!id) return null;
       return titleOf(id, mediaType).then(function (meta) {
@@ -312,7 +314,7 @@ function getStreams(tmdbId, mediaType) {
           return hit ? abs(BASE, hit.url) : null;
         });
       });
-    })
+    }))
     .then(function (url) {
       if (!url) return null;
       filmUrl = url;
@@ -484,7 +486,7 @@ module.exports.getStreams = function (id, mediaType, season, episode) {
       var poster = pm ? __abs(pm[1]) : null;
       if (poster && /^data:/i.test(poster)) poster = null;
       seen[full] = 1;
-      out.push({ id: "__alt__:" + encodeURIComponent(title), name: title, poster: poster, type: "movie" });
+      out.push({ id: "__href__:" + encodeURIComponent(full), name: title, poster: poster, type: "movie" });
       if (out.length >= 40) break;
     }
     return out;

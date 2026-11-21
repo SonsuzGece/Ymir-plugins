@@ -844,7 +844,7 @@ module.exports.getStreams = function (id, mediaType, season, episode) {
  *  bigbull build.mjs), __alt__ title bridge into the bb getStreams above.
  * =================================================================== */
 ;(function () {
-  var __CFG = {"id":"selcukflix","name":"SelcukFlix","type":"movie","url":"https://selcukflix.app/film-izle","unescape":true,"item":"\\{\"id\":\"film\\d+\",\"t\":\"[^\"]+\",\"href\":\"/film/[^\"]+\"[\\s\\S]{0,900}?\"img\":\"[^\"]+\"","title":"\"t\":\"([^\"]+)\"","poster":"\"img\":\"([^\"]+)\"","limit":40};
+  var __CFG = {"id":"selcukflix","name":"SelcukFlix","type":"movie","url":"https://selcukflix.app/film-izle","unescape":true,"item":"\\{\"id\":\"film\\d+\",\"t\":\"[^\"]+\",\"href\":\"/film/[^\"]+\"[\\s\\S]{0,900}?\"img\":\"[^\"]+\"","title":"\"t\":\"([^\"]+)\"","href":"\"href\":\"([^\"]+)\"","poster":"\"img\":\"([^\"]+)\"","limit":40};
   var __SERIES = false;
   var __UA = (typeof UA !== 'undefined' && UA) ? UA :
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36";

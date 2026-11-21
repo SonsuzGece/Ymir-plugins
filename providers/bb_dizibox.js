@@ -119,44 +119,24 @@ function getStreams(tmdbId, mediaType, season, episode) {
 
   var directHref = (typeof tmdbId === "string" && tmdbId.indexOf("__href__:") === 0)
     ? decodeURIComponent(tmdbId.slice(9)) : null;
-  if (directHref) {
-    candidates = [abs(BASE, directHref)];
-    return fromSeries(0)
-      .then(function (epUrl) {
-        if (!epUrl) return [];
-        episodeUrl = epUrl;
-        return text(epUrl, { referer: BASE + "/" }).then(function (h) {
-          var m = /<iframe[^>]+src=["']([^"']+)["']/i.exec(h);
-          if (!m) return [];
-          embedUrl = abs(BASE, m[1]);
-          return text(embedUrl, { referer: epUrl }).then(function (eh) {
-            var out = [], seen = {};
-            var re = /https?:\/\/[^"'\s<>\\]+\.(?:m3u8|mp4)(?:\?[^"'\s<>\\]*)?/gi, mm;
-            var clean = eh.replace(/\\\//g, "/");
-            while ((mm = re.exec(clean)) !== null) {
-              if (seen[mm[0]]) continue; seen[mm[0]] = 1;
-              out.push({ name: "Dizibox", title: "Dizibox", url: mm[0], type: /\.m3u8/.test(mm[0]) ? "hls" : "mp4", headers: { Referer: embedUrl, "User-Agent": UA } });
-            }
-            return out;
-          });
-        });
-      }).catch(function () { return []; });
-  }
-  return titleOf(tmdbId, mediaType)
-    .then(function (title) {
-      wantTitle = title;
-      if (!title) return null;
-      return text(BASE + "/search/" + encodeURIComponent(title).replace(/%20/g, "+") + "/");
-    })
-    .then(function (search) {
-      if (!search) return null;
-      var re = /<article class="detailed-article"[\s\S]*?<h3[^>]*><a href="([^"]+)"[^>]*>([^<]*)/g;
-      var m;
-      while ((m = re.exec(search)) !== null && candidates.length < 2) {
-        if (sameTitle(m[2], wantTitle)) candidates.push(abs(BASE, m[1]));
-      }
-      return fromSeries(0);
-    })
+  var epFlow = directHref
+    ? (candidates = [abs(BASE, directHref)], fromSeries(0))
+    : titleOf(tmdbId, mediaType)
+      .then(function (title) {
+        wantTitle = title;
+        if (!title) return null;
+        return text(BASE + "/search/" + encodeURIComponent(title).replace(/%20/g, "+") + "/");
+      })
+      .then(function (search) {
+        if (!search) return null;
+        var re = /<article class="detailed-article"[\s\S]*?<h3[^>]*><a href="([^"]+)"[^>]*>([^<]*)/g;
+        var m;
+        while ((m = re.exec(search)) !== null && candidates.length < 2) {
+          if (sameTitle(m[2], wantTitle)) candidates.push(abs(BASE, m[1]));
+        }
+        return fromSeries(0);
+      });
+  return epFlow
     .then(function (ep) {
       if (!ep) return null;
       episodeUrl = ep;

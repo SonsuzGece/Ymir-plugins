@@ -65,9 +65,11 @@ async function getMeta(args) {
 
   var videos = [], seen = {};
   // a.ep-num-btn[href] with span.ep-num-label
-  var re = /<a[^>]*class="[^"]*ep-num-btn[^"]*"[^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/gi, m;
+  var re = /<a\b([^>]*href="[^"]+"[^>]*)>([\s\S]*?)<\/a>/gi, m;
   while ((m = re.exec(html)) !== null) {
-    var href = abs(m[1]);
+    if (!/ep-num-btn|sezon-\d+-bolum|bolum-izle/i.test(m[1])) continue;
+    var hm = m[1].match(/href="([^"]+)"/i); if (!hm) continue;
+    var href = abs(hm[1]);
     if (seen[href]) continue; seen[href] = 1;
     var sm = href.match(/-(\d+)-sezon-\d+-bolum-izle/);
     var season = sm ? parseInt(sm[1], 10) : 1;

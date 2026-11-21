@@ -342,86 +342,55 @@ module.exports.getStreams = function (id, mediaType, season, episode) {
 
 
 /* ===================================================================
- *  Ymir adapter (bb-nuvio): catalog from addon config (parsing mirrors
- *  bigbull build.mjs), __alt__ title bridge into the bb getStreams above.
+ *  Ymir adapter (fixed): flexible /film/ card parser + filmmodu.one fallback
  * =================================================================== */
 ;(function () {
-  var __CFG = {"id":"filmmodu","name":"FilmModu","type":"movie","url":"https://filmmodu.icu/filmler","item":"<a href=\"https://filmmodu\\.[a-z0-9-]+/film/[^\"]+\"[^>]*class=\"group block\">[\\s\\S]*?</a>","title":"alt=\"([^\"]+)\"","strip":"\\s+Film\\s+[İi]zle$","poster":"src=\"([^\"]+)\"","year":"<p[^>]*>\\s*(\\d{4})\\s*</p>","group":["latest-movie"]};
-  var __SERIES = false;
-  var __UA = (typeof UA !== 'undefined' && UA) ? UA :
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36";
-  function __fetch(u) {
-    return fetch(u, { headers: { "User-Agent": __UA, "Accept-Language": "tr-TR,tr;q=0.9" } })
-      .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status + " " + u); return r.text(); });
-  }
-  var __ENT = { amp:"&", lt:"<", gt:">", quot:'"', apos:"'", nbsp:" ", ouml:"ö", uuml:"ü", Ouml:"Ö", Uuml:"Ü" };
-  function __stripTags(h) {
-    return String(h || "")
-      .replace(/<[^>]*>/g, " ")
-      .replace(/&([a-zA-Z]{2,8});/g, function (m, k) { return __ENT[k] != null ? __ENT[k] : m; })
-      .replace(/&#x([0-9a-fA-F]+);/g, function (_, x) { return String.fromCharCode(parseInt(x, 16)); })
-      .replace(/&#(\d+);/g, function (_, d) { return String.fromCharCode(+d); })
-      .replace(/\s+/g, " ").trim();
-  }
-  function __origin(u) { var m = /^(https?:\/\/[^/]+)/.exec(u); return m ? m[1] : ""; }
-  async function getCatalog(args) {
-    var q = args && args.query ? String(args.query).trim() : "";
-    if (q) {
-      return { items: [{ id: "__alt__:" + encodeURIComponent(q), name: q, poster: null,
-        type: __SERIES ? "tv" : "movie" }] };
-    }
-    var html = ""; try { html = await __fetch(__CFG.url); } catch (e) { html = await __fetch("https://www.filmmodu.one/filmler"); }
-    if (__CFG.unescape) html = html.replace(/\\"/g, '"');
-    var blocks = html.match(new RegExp(__CFG.item, "gi")) || [];
-    var titleRe = new RegExp(__CFG.title, "i");
-    var items = [], seen = {};
-    for (var i = 0; i < blocks.length; i++) {
-      var b = blocks[i];
-      var mm = titleRe.exec(b);
-      var title = mm ? __stripTags(mm[1]) : "";
-      if (__CFG.strip) title = title.replace(new RegExp(__CFG.strip, "i"), "").trim();
-      if (!title || title.length < 2) continue;
-      var key = title.toLowerCase();
-      if (seen[key]) continue; seen[key] = 1;
-      var poster = __CFG.poster ? ((new RegExp(__CFG.poster, "i").exec(b) || [])[1]) : null;
-      if (poster && /^data:/i.test(poster)) poster = null;
-      if (poster && poster.charAt(0) === "/") poster = __origin(__CFG.url) + poster;
-      if (poster) poster = __stripTags(poster);
-      items.push({ id: "__alt__:" + encodeURIComponent(title), name: title, poster: poster || null,
-        type: __SERIES ? "tv" : "movie" });
-      if (__CFG.limit && items.length >= __CFG.limit) break;
-      if (items.length >= 100) break;
-    }
-    if (!items.length) throw new Error("katalog boş: item regex eşleşmedi (" + __CFG.url + ")");
-    return { items: items };
-  }
-  async function search(args) { return getCatalog(args); }
-
-  // Series: synthetic season/episode grid so episodes are navigable; the bb
-  // getStreams resolves whichever S/E actually exists on the site.
-  async function getMeta(args) {
-    var id = args && args.id;
-    var title = /^__alt__:/.test(String(id)) ? decodeURIComponent(String(id).slice(8)) : String(id || "");
-    var videos = [];
-    var SEASONS = 3, EP = 30;
-    for (var s = 1; s <= SEASONS; s++) {
-      for (var e = 1; e <= EP; e++) {
-        videos.push({ id: id, title: s + ". Sezon " + e + ". Bölüm", season: s, episode: e });
-      }
-    }
-    return { meta: { id: id, type: "series", name: title, videos: videos } };
-  }
-
   var __bbGetStreams = module.exports.getStreams;
-  async function getStreams(tmdbId, mediaType, season, episode, url) {
-    var id = url || tmdbId;
-    return __bbGetStreams(id, __SERIES ? "tv" : "movie", season, episode);
+  var __UA = (typeof UA !== "undefined" && UA) ? UA : "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36";
+  function __parse(html, origin) {
+    var out = [], seen = {};
+    var re = /<a\b([^>]*?)href=["']([^"']+)["']([^>]*)>([\s\S]*?)<\/a>/gi, m;
+    while ((m = re.exec(html)) !== null) {
+      var open = m[1] + " " + m[3], href = m[2], inner = m[4];
+      if (!/<img/i.test(inner)) continue;
+      if (href.indexOf("/film/") === -1 && !/\/[a-z0-9-]+-film-izle/i.test(href)) continue;
+      var full = href.indexOf("http") === 0 ? href : (origin + (href.charAt(0) === "/" ? href : "/" + href));
+      if (seen[full]) continue;
+      var img = (inner.match(/<img[^>]*>/i) || [""])[0];
+      var tm = open.match(/title=["']([^"']+)["']/i) || img.match(/alt=["']([^"']+)["']/i);
+      var title = String(tm ? tm[1] : inner).replace(/<[^>]+>/g, " ").replace(/\s+Film\s+[İi]zle$/i, "").replace(/\s+/g, " ").trim();
+      if (!title || title.length < 2) continue;
+      var pm = img.match(/(?:data-src|data-lazy-src|src)=["']([^"']+)["']/i);
+      var poster = pm ? pm[1] : null;
+      if (poster && poster.charAt(0) === "/") poster = origin + poster;
+      if (poster && /^data:/i.test(poster)) poster = null;
+      seen[full] = 1;
+      out.push({ id: "__alt__:" + encodeURIComponent(title), name: title, poster: poster, type: "movie" });
+      if (out.length >= 40) break;
+    }
+    return out;
   }
-  var __exports = { getCatalog: getCatalog, getStreams: getStreams, search: search };
-  if (__SERIES) __exports.getMeta = getMeta;
-  module.exports = __exports;
-  if (typeof globalThis !== 'undefined') {
-    globalThis.getCatalog = getCatalog; globalThis.getStreams = getStreams; globalThis.search = search;
-    if (__SERIES) globalThis.getMeta = getMeta;
+  async function getCatalog(args) {
+    var q = args && (args.query || args.search) ? String(args.query || args.search).trim() : "";
+    if (q) return { items: [{ id: "__alt__:" + encodeURIComponent(q), name: q, poster: null, type: "movie" }] };
+    var urls = ["https://filmmodu.icu/filmler", "https://www.filmmodu.one/filmler", "https://filmmodu.icu/", "https://www.filmmodu.one/"];
+    for (var i = 0; i < urls.length; i++) {
+      try {
+        var r = await fetch(urls[i], { headers: { "User-Agent": __UA, "Accept-Language": "tr-TR,tr;q=0.9" } });
+        if (!r.ok) continue;
+        var orig = (urls[i].match(/^https?:\/\/[^/]+/) || ["https://filmmodu.icu"])[0];
+        var items = __parse(await r.text(), orig);
+        if (items.length) return { items: items };
+      } catch (e) {}
+    }
+    throw new Error("FilmModu katalog boş");
+  }
+  async function search(args) { return getCatalog(typeof args === "string" ? { query: args } : args); }
+  async function getStreams(tmdbId, mediaType, season, episode, url) {
+    return __bbGetStreams(url || tmdbId, "movie", season, episode);
+  }
+  module.exports = { getCatalog: getCatalog, search: search, getStreams: getStreams };
+  if (typeof globalThis !== "undefined") {
+    globalThis.getCatalog = getCatalog; globalThis.search = search; globalThis.getStreams = getStreams;
   }
 })();

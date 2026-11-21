@@ -207,7 +207,22 @@ async function getCatalog(args) {
   var q = argQuery(args);
   if (q) return search(q);
   var r = await httpGet(BASE + "/", BASE + "/");
-  var items = genericCards(r.text, "tv");
+  var items = [];
+  var chunks = r.text.split("post-container"), seenAm = {};
+  for (var ci = 1; ci < chunks.length; ci++) {
+    var ch = chunks[ci].slice(0, 2500);
+    var am = ch.match(/class="[^"]*title[^"]*"[^>]*>[\s\S]{0,200}?<a[^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/i)
+          || ch.match(/<a[^>]*href=["'](https?:\/\/asyamax\.com\/[^"'?#]+)["'][^>]*title=["']([^"']+)["']/i);
+    if (!am) continue;
+    var u = absUrl(am[1]);
+    if (/\/category\/|\/tag\/|\/page\//i.test(u) || seenAm[u]) continue;
+    var title = stripTags(am[2]);
+    if (!title || title.length < 2) continue;
+    var im = ch.match(/<img[^>]+(?:data-src|data-lazy-src|src)=["']([^"']+)["']/i);
+    seenAm[u] = 1;
+    items.push({ id: u, name: title, poster: im ? absUrl(im[1]) : null, type: "tv", description: "" });
+  }
+  if (!items.length) items = genericCards(r.text, "tv").filter(function (x) { return !/\/category\//i.test(x.id); });
   if (!items.length && "/" !== "/") {
     var r2 = await httpGet(BASE + "/", BASE + "/");
     items = genericCards(r2.text, "tv");

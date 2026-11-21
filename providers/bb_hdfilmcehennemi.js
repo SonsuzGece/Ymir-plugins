@@ -72,7 +72,16 @@ async function search(args) {
   var q = (typeof args === "object" && args) ? String(args.query || args.search || "").trim() : String(args || "").trim();
   if (!q) return { items: [] };
   var html = await fetchText(BASE + "/?s=" + encodeURIComponent(q), { referer: BASE + "/" });
-  return { items: parseCards(html).slice(0, 40) };
+  var items = parseCards(html);
+  if (!items.length) {
+    var re = /<a[^>]+href="(https?:\/\/www\.hdfilmcehennemi\.land\/(?:film|dizi)\/[^"]+)"[^>]*>([\s\S]*?)<\/a>/gi, m, seen = {};
+    while ((m = re.exec(html)) !== null) {
+      if (seen[m[1]]) continue; seen[m[1]] = 1;
+      var t = stripTags(m[2]); if (t.length < 2) continue;
+      items.push({ id: m[1], name: t, poster: null, type: m[1].indexOf("/dizi/") !== -1 ? "tv" : "movie", description: "" });
+    }
+  }
+  return { items: items.slice(0, 40) };
 }
 
 async function getMeta(args) {
@@ -156,11 +165,11 @@ async function getStreams(tmdbId, mediaType, season, episode, url) {
           headers: { "Content-Type": "application/x-www-form-urlencoded", "X-Requested-With": "XMLHttpRequest" },
           body: body
         });
-        var um = ajaxTxt.match(/"url"\s*:\s*"([^"]+)"/);
+        var um = ajaxTxt.match(/"url"\s*:\s*"([^"]+)"/) || ajaxTxt.match(/src=["'](https?:\/\/[^"']+)["']/i);
         if (um) {
           var iframeUrl = um[1].replace(/\\\//g, "/");
           var iframeHtml = await fetchText(iframeUrl, { referer: pageUrl });
-          var cer = iframeHtml.match(/SPG\.cerceve\("[^"]+","([^"]+)","([^"]+)"\)/);
+          var cer = iframeHtml.match(/SPG\.cerceve\(\s*["'][^"']+["']\s*,\s*["']([^"']+)["']\s*,\s*["']([^"']+)["']\s*\)/);
           if (cer) {
             var fpUrl = spgDecode(cer[1], cer[2]);
             if (fpUrl && fpUrl.indexOf("http") === 0) {

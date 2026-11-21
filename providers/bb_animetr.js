@@ -205,17 +205,28 @@ function genericEpisodes(html, pageUrl) {
 
 function parseAnimeCards(html) {
   var out = [], seen = {};
-  var re = /<a\b[^>]*class="[^"]*anime-card[^"]*"[^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/gi, m;
+  var re = /<a\b([^>]*?)>([\s\S]*?)<\/a>/gi, m;
   while ((m = re.exec(html)) !== null) {
-    var u = absUrl(m[1]), inner = m[2];
+    var open = m[1], inner = m[2];
+    if (!/anime-card/i.test(open)) continue;
+    var href = attrOf(open, "href");
+    if (!href || /\/bolumler\b|\.(png|jpg|webp|svg)$/i.test(href)) continue;
+    var u = absUrl(href);
     if (seen[u]) continue; seen[u] = 1;
-    var im = inner.match(/<img[^>]+(?:data-src|src)="([^"]+)"/i);
-    var tm = inner.match(/<(?:h2|h3|h4|span)[^>]*class="[^"]*title[^"]*"[^>]*>([\s\S]*?)<\//i);
-    var title = stripTags(tm ? tm[1] : inner);
-    if (!title) continue;
+    var im = inner.match(/<img[^>]+(?:data-src|data-lazy-src|src)=["']([^"']+)["']/i);
+    var tm = inner.match(/class="[^"]*seri-title[^"]*"[^>]*>([\s\S]*?)<\//i)
+          || inner.match(/<(?:h2|h3|h4|span)[^>]*class="[^"]*title[^"]*"[^>]*>([\s\S]*?)<\//i);
+    var title = stripTags(tm ? tm[1] : (attrOf(open, "aria-label") || attrOf(open, "title") || inner));
+    if (!title || title.length < 2) continue;
     out.push({ id: u, name: title, poster: im ? absUrl(im[1]) : null, type: "tv", description: "" });
   }
-  return out.length ? out : genericCards(html, "tv");
+  if (!out.length) {
+    var fallback = genericCards(html, "tv");
+    for (var i = 0; i < fallback.length; i++) {
+      if (!/\/bolumler\b|\.(png|jpg|webp|svg)$/i.test(fallback[i].id)) out.push(fallback[i]);
+    }
+  }
+  return out;
 }
 async function getCatalog(args) {
   var q = argQuery(args);
@@ -236,9 +247,10 @@ async function getMeta(args) {
   var tm = html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i);
   var title = tm ? stripTags(tm[1]) : NAME;
   var videos = [], seen = {};
-  var re = /<a[^>]*class="[^"]*ep-item__link[^"]*"[^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/gi, m;
+  var re = /<a\b([^>]*ep-item__link[^>]*)>([\s\S]*?)<\/a>/gi, m;
   while ((m = re.exec(html)) !== null) {
-    var u = absUrl(m[1]);
+    var h = attrOf(m[1], "href"); if (!h) continue;
+    var u = absUrl(h);
     if (seen[u]) continue; seen[u] = 1;
     var lbl = stripTags(m[2]) || ("Bölüm " + (videos.length + 1));
     var nm = lbl.match(/(\d+)/);

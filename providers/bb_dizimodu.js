@@ -236,9 +236,13 @@ async function getStreams(tmdbId, mediaType, season, episode, url) {
     var o = opts[i];
     var embed = BASE + "/?trembed=" + o.key + "&trid=" + o.trid + "&trtype=2";
     try {
-      var pr = await httpPost(BASE + "/partgetirply.php", "data=" + encodeURIComponent(o.trid + "," + o.key + ",2"), embed, { "X-Requested-With": "XMLHttpRequest" });
+      var pr = await httpPost(BASE + "/partgetirply.php", "data=" + encodeURIComponent(o.trid + "," + o.key + ",2"), embed, { "X-Requested-With": "XMLHttpRequest", "Origin": BASE });
       var um = pr.text.match(/https?:\/\/[^"'\s<>\\]+/);
       if (um) await resolveEmbedUrl(um[0], embed, NAME, out, seen);
+      if (!out.length) {
+        var gr = await httpGet(embed, page);
+        await extractGenericStreams(embed, gr.text, out, seen, false);
+      }
     } catch (e) {}
   }
   if (!out.length) await extractGenericStreams(page, r.text, out, seen, false);

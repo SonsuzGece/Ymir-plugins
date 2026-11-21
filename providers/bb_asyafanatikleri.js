@@ -118,7 +118,7 @@ async function resolveEmbedUrl(frame, ref, label, out, seen) {
   if (/tau-video\.xyz/i.test(u)) { await resolveTauVideo(u, label, out, seen); return; }
   try {
     var target = u.replace(/vidmoly\.(?:to|me|biz)/i, "vidmoly.net");
-    var r = await httpGet(target, ref || (BASE + "/"));
+    var r = await httpGet(target, /vidmoly/i.test(target) ? (BASE + "/") : (ref || (BASE + "/")), /vidmoly/i.test(target) ? { "Sec-Fetch-Dest": "iframe" } : null);
     pushDirectMedia(r.text, target, label, out, seen);
     var jsRedir = r.text.match(/location\.replace\(\s*['"](https?:\/\/[^'"]+)['"]\s*\)/i);
     if (jsRedir) {
@@ -217,8 +217,13 @@ async function getCatalog(args) {
 async function search(args) {
   var q = argQuery(args);
   if (!q) return { items: [] };
-  var r = await httpGet(BASE + "/ara?q={Q}".replace("{Q}", encodeURIComponent(q)), BASE + "/");
-  return { items: genericCards(r.text, "tv").slice(0, 40) };
+  var r = await httpGet(BASE + "/ara?q=" + encodeURIComponent(q), BASE + "/");
+  var items = genericCards(r.text, "tv");
+  if (!items.length) {
+    var r2 = await httpGet(BASE + "/?s=" + encodeURIComponent(q), BASE + "/");
+    items = genericCards(r2.text, "tv");
+  }
+  return { items: items.slice(0, 40) };
 }
 async function getMeta(args) {
   var url = argId(args);

@@ -207,7 +207,8 @@ async function getCatalog(args) {
   var q = argQuery(args);
   if (q) return search(q);
   var r = await httpGet(BASE + "/", BASE + "/");
-  return { items: genericCards(r.text, "movie").slice(0, 60) };
+  var items = genericCards(r.text, "movie").filter(function (x) { return !/slide\.url|\{\{|javascript:/i.test(x.id); });
+  return { items: items.slice(0, 60) };
 }
 async function search(args) {
   var q = argQuery(args);
@@ -235,7 +236,36 @@ async function getStreams(tmdbId, mediaType, season, episode, url) {
   if (!page) return [];
   var out = [], seen = {};
   var r = await httpGet(page, BASE + "/");
-  await extractGenericStreams(page, r.text, out, seen, false);
+  // Port of loadAlpine: videoPlayerData(JSON.parse('...')) -> base64 template -> embed -> setup(JSON.parse('...'))
+  try {
+    var am = r.text.match(/videoPlayerData\(JSON\.parse\('([\s\S]*?)'\)/);
+    if (am) {
+      var jsStr = am[1].replace(/\\u0022/g, '"').replace(/\\u0027/g, "'").replace(/\\\//g, "/").replace(/\\'/g, "'").replace(/\\"/g, '"');
+      var root = JSON.parse(jsStr);
+      for (var k in root) {
+        var arr = root[k];
+        if (!Array.isArray(arr)) continue;
+        for (var i = 0; i < arr.length && i < 4; i++) {
+          var it = arr[i];
+          if (!it || !it.template) continue;
+          var tpl = atob(it.template).replace(/\{slug\}/g, it.slug || "").replace(/\{url\}/g, it.link || "");
+          var em = tpl.match(/(?:data-)?src=["']([^"']+)["']/i);
+          if (!em) continue;
+          var embed = absUrl(em[1]);
+          try {
+            var er = await httpGet(embed, page);
+            var sm = er.text.match(/setup\(JSON\.parse\('([\s\S]*?)'\)/);
+            if (sm) {
+              var cfg = JSON.parse(sm[1].replace(/\\u0022/g, '"').replace(/\\\//g, "/").replace(/\\"/g, '"'));
+              if (cfg.file) pushDirectMedia(cfg.file, embed, NAME + " · " + k, out, seen);
+            }
+            pushDirectMedia(er.text, embed, NAME, out, seen);
+          } catch (e) {}
+        }
+      }
+    }
+  } catch (e) {}
+  if (!out.length) await extractGenericStreams(page, r.text, out, seen, false);
   return out;
 }
 

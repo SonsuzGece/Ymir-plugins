@@ -224,6 +224,19 @@ async function getStreams(tmdbId, mediaType, season, episode, url) {
   if (!page) return [];
   var out = [], seen = {};
   var r = await httpGet(page, BASE + "/");
+  // Port of loadHdf: _hdfNonce_ + data-post -> POST /ajax/videosrc/?id=<post>&lang=tr&mr=0
+  try {
+    var nm = r.text.match(/_hdfNonce_\s*=\s*"([^"]+)"/);
+    var pm = r.text.match(/data-post="(\d+)"/);
+    if (nm && pm) {
+      var hr = await httpPost(BASE + "/ajax/videosrc/?id=" + pm[1] + "&lang=tr&mr=0", "", page, { "X-HDF-Nonce": nm[1], "X-Requested-With": "XMLHttpRequest" });
+      var hj = JSON.parse(hr.text || "{}");
+      if (hj.src && hj.src.indexOf("http") === 0) {
+        var u0 = hj.src;
+        if (!seen[u0]) { seen[u0] = 1; out.push({ name: NAME + " · HDF", url: u0, type: /\.mp4(\?|$)/i.test(u0) ? "mp4" : "hls", headers: { "User-Agent": UA, "Referer": page } }); }
+      }
+    }
+  } catch (e) {}
   var opRe = /openPlayer\(\s*['"](https?:\/\/[^'"]+)['"]/gi, m;
   while ((m = opRe.exec(r.text)) !== null) {
     var op = m[1];

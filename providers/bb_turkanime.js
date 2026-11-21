@@ -207,7 +207,8 @@ async function getCatalog(args) {
   var q = argQuery(args);
   if (q) return search(q);
   var r = await httpGet(BASE + "/animeler?sort=rating", BASE + "/");
-  return { items: genericCards(r.text, "tv").slice(0, 60) };
+  var all = genericCards(r.text, "tv").filter(function (x) { return /\/(dizi|film)\//i.test(x.id); });
+  return { items: all.slice(0, 60) };
 }
 async function search(args) {
   var q = argQuery(args);

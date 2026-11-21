@@ -207,7 +207,7 @@ function mapItem(it) {
   var slug = it.slug || it.id || "";
   var poster = it.poster || it.poster_url || it.image || null;
   if (poster && poster.indexOf("http") !== 0) poster = absUrl(poster);
-  return { id: BASE + "/anime/" + slug, name: it.title || it.name || slug, poster: poster, type: "tv", description: it.description || "" };
+  return { id: BASE + "/anime/" + slug, name: it.baslik || it.ingilizce || it.title || it.name || slug, poster: poster, type: "tv", description: it.description || "" };
 }
 async function getCatalog(args) {
   var q = argQuery(args);
@@ -235,15 +235,15 @@ async function getMeta(args) {
   var slug = url.split("/anime/").pop().split("/")[0].split("?")[0];
   var videos = [], title = slug;
   try {
-    var r = await httpGet(BASE + "/api/animes/" + slug, BASE + "/", { Accept: "application/json" });
+    var r = await httpGet(BASE + "/api/anime/" + slug, BASE + "/", { Accept: "application/json" });
     var j = JSON.parse(r.text || "{}");
-    title = j.title || j.name || title;
+    title = j.baslik || j.ingilizce || j.title || j.name || title;
     var eps = j.episodes || j.bolumler || [];
     for (var i = 0; i < eps.length; i++) {
       var e = eps[i];
       var eSlug = e.slug || e.id;
       if (!eSlug) continue;
-      videos.push({ id: BASE + "/bolum/" + eSlug, title: e.title || ("Bölüm " + (e.episode_number || (i + 1))), season: e.season || 1, episode: e.episode_number || (i + 1) });
+      videos.push({ id: BASE + "/bolum/" + eSlug, title: e.ad || e.title || ("Bölüm " + (e.index || e.index || e.episode_number || (i + 1))), season: e.season || 1, episode: e.index || e.episode_number || (i + 1) });
     }
   } catch (e) {}
   if (!videos.length) {
@@ -257,6 +257,7 @@ async function getMeta(args) {
 async function getStreams(tmdbId, mediaType, season, episode, url) {
   var page = streamUrlArg(tmdbId, url);
   if (!page) return [];
+  if (page.indexOf("/bolum/") === -1) return [];
   var slug = page.split("/bolum/").pop().split("/")[0].split("?")[0];
   var out = [], seen = {};
   try {
