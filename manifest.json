@@ -914,6 +914,29 @@
         "tr"
       ],
       "supportsExternalPlayer": true
+    },
+    {
+      "id": "kekik_cizgimax",
+      "name": "CizgiMax",
+      "description": "CizgiMax — çizgi dizi (Kekik portu, bePlayer AES + SibNet).",
+      "version": "1.0.0",
+      "author": "kekik/ymir",
+      "supportedTypes": [
+        "tv",
+        "series"
+      ],
+      "filename": "providers/kekik_cizgimax.js",
+      "enabled": true,
+      "formats": [
+        "m3u8",
+        "mp4",
+        "hls"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=cizgimax.online&sz=128",
+      "contentLanguage": [
+        "tr"
+      ],
+      "supportsExternalPlayer": true
     }
   ]
 }
