@@ -6,30 +6,6 @@
   "description": "Anthology - Türkçe Dizi, Film, Anime ve Canlı TV/Spor Eklenti Deposu",
   "scrapers": [
     {
-      "id": "kekik_sinewix",
-      "name": "SineWix",
-      "description": "SineWix API — film, dizi, anime (Kekik portu).",
-      "version": "2.0.0",
-      "author": "kekik/ymir",
-      "supportedTypes": [
-        "movie",
-        "tv",
-        "series"
-      ],
-      "filename": "providers/kekik_sinewix.js",
-      "enabled": true,
-      "formats": [
-        "m3u8",
-        "mp4",
-        "hls"
-      ],
-      "logo": "https://www.google.com/s2/favicons?domain=kekikakademi.org&sz=128",
-      "contentLanguage": [
-        "tr"
-      ],
-      "supportsExternalPlayer": true
-    },
-    {
       "id": "animecix",
       "name": "AnimeciX",
       "description": "TauVideo altyapısıyla binlerce anime bölümü (1080p, 720p, 480p direct MP4).",
@@ -893,29 +869,6 @@
       "supportsExternalPlayer": true
     },
     {
-      "id": "kekik_setfilmizle",
-      "name": "SetFilmIzle",
-      "description": "SetFilmIzle — film+dizi (Kekik CloudStream portu, SetPlay/ExPlay).",
-      "version": "1.0.0",
-      "author": "kekik/ymir",
-      "supportedTypes": [
-        "movie",
-        "tv",
-        "series"
-      ],
-      "filename": "providers/kekik_setfilmizle.js",
-      "enabled": true,
-      "formats": [
-        "m3u8",
-        "hls"
-      ],
-      "logo": "https://www.google.com/s2/favicons?domain=setfilmizle.nl&sz=128",
-      "contentLanguage": [
-        "tr"
-      ],
-      "supportsExternalPlayer": true
-    },
-    {
       "id": "kekik_cizgimax",
       "name": "CizgiMax",
       "description": "CizgiMax — çizgi dizi (Kekik portu, bePlayer AES + SibNet).",
@@ -933,6 +886,78 @@
         "hls"
       ],
       "logo": "https://www.google.com/s2/favicons?domain=cizgimax.online&sz=128",
+      "contentLanguage": [
+        "tr"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "kekik_asyadizi",
+      "name": "AsyaDizi",
+      "description": "AsyaDizi — Kore/Çin/Japon/BL dizileri (bigbull portu).",
+      "version": "1.0.0",
+      "author": "bigbullapp/ymir",
+      "supportedTypes": [
+        "movie",
+        "tv",
+        "series"
+      ],
+      "filename": "providers/kekik_asyadizi.js",
+      "enabled": true,
+      "formats": [
+        "m3u8",
+        "mp4",
+        "hls"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=asyadizi.com&sz=128",
+      "contentLanguage": [
+        "tr"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "kekik_asyabox",
+      "name": "AsyaBox",
+      "description": "AsyaBox — Asya dizileri (bigbull portu).",
+      "version": "1.0.0",
+      "author": "bigbullapp/ymir",
+      "supportedTypes": [
+        "movie",
+        "tv",
+        "series"
+      ],
+      "filename": "providers/kekik_asyabox.js",
+      "enabled": true,
+      "formats": [
+        "m3u8",
+        "mp4",
+        "hls"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=asyabox.co&sz=128",
+      "contentLanguage": [
+        "tr"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "kekik_asyawatch",
+      "name": "AsyaWatch",
+      "description": "AsyaWatch — Asya dizi/film (bigbull portu).",
+      "version": "1.0.0",
+      "author": "bigbullapp/ymir",
+      "supportedTypes": [
+        "movie",
+        "tv",
+        "series"
+      ],
+      "filename": "providers/kekik_asyawatch.js",
+      "enabled": true,
+      "formats": [
+        "m3u8",
+        "mp4",
+        "hls"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=asyawatch.com&sz=128",
       "contentLanguage": [
         "tr"
       ],
