@@ -1,7 +1,7 @@
 {
   "id": "anthology",
   "name": "Anthology",
-  "version": "1.9.0",
+  "version": "1.9.2",
   "author": "falsisdev",
   "description": "Anthology - Türkçe Dizi, Film, Anime ve Canlı TV/Spor Eklenti Deposu",
   "scrapers": [
@@ -15,7 +15,7 @@
         "tv",
         "movie"
       ],
-      "filename": "providers/animecix.js",
+      "filename": "providers/animecix.js?v=2",
       "enabled": true,
       "formats": [
         "mp4"
@@ -55,7 +55,7 @@
         "movie",
         "anime"
       ],
-      "filename": "providers/anizium.js",
+      "filename": "providers/anizium.js?v=2",
       "enabled": true,
       "formats": [
         "mp4"
@@ -96,7 +96,7 @@
         "tv",
         "movie"
       ],
-      "filename": "providers/asyaanimeleri.js",
+      "filename": "providers/asyaanimeleri.js?v=2",
       "enabled": true,
       "formats": [
         "mp4",
@@ -137,7 +137,7 @@
         "movie",
         "tv"
       ],
-      "filename": "providers/diziboxizle.js",
+      "filename": "providers/diziboxizle.js?v=2",
       "enabled": true,
       "formats": [
         "mp4",
@@ -178,7 +178,7 @@
         "movie",
         "tv"
       ],
-      "filename": "providers/ddizi.js",
+      "filename": "providers/ddizi.js?v=2",
       "enabled": true,
       "formats": [
         "mp4",
@@ -219,7 +219,7 @@
         "movie",
         "tv"
       ],
-      "filename": "providers/yabancidizi.js",
+      "filename": "providers/yabancidizi.js?v=2",
       "enabled": true,
       "formats": [
         "hls",
@@ -242,7 +242,7 @@
         "movie",
         "tv"
       ],
-      "filename": "providers/setfilmizle.js",
+      "filename": "providers/setfilmizle.js?v=2",
       "enabled": true,
       "formats": [
         "hls",
@@ -293,7 +293,7 @@
         "movie",
         "tv"
       ],
-      "filename": "providers/hdfilmdelisi.js",
+      "filename": "providers/hdfilmdelisi.js?v=2",
       "enabled": true,
       "formats": [
         "hls",
@@ -333,7 +333,7 @@
         "movie",
         "tv"
       ],
-      "filename": "providers/hdfilmizle.js",
+      "filename": "providers/hdfilmizle.js?v=2",
       "enabled": true,
       "formats": [
         "hls",
@@ -375,7 +375,7 @@
         "series",
         "anime"
       ],
-      "filename": "providers/diziwatch.js",
+      "filename": "providers/diziwatch.js?v=2",
       "enabled": true,
       "formats": [
         "hls",
@@ -404,7 +404,7 @@
         "movie",
         "anime"
       ],
-      "filename": "providers/seicode.js",
+      "filename": "providers/seicode.js?v=2",
       "enabled": true,
       "formats": [
         "mp4",
@@ -445,7 +445,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/bb_animecix.js",
+      "filename": "providers/bb_animecix.js?v=2",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -468,7 +468,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/bb_asyaanimeleri.js",
+      "filename": "providers/bb_asyaanimeleri.js?v=2",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -491,7 +491,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/bb_ddizi.js",
+      "filename": "providers/bb_ddizi.js?v=2",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -514,7 +514,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/bb_dizibal.js",
+      "filename": "providers/bb_dizibal.js?v=2",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -537,7 +537,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/bb_dizibox.js",
+      "filename": "providers/bb_dizibox.js?v=2",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -560,7 +560,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/bb_dizikorea3.js",
+      "filename": "providers/bb_dizikorea3.js?v=2",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -583,7 +583,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/bb_dizilla.js",
+      "filename": "providers/bb_dizilla.js?v=2",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -606,7 +606,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/bb_dizimom.js",
+      "filename": "providers/bb_dizimom.js?v=2",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -629,7 +629,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/bb_dizipal.js",
+      "filename": "providers/bb_dizipal.js?v=2",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -652,7 +652,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/bb_diziyou.js",
+      "filename": "providers/bb_diziyou.js?v=2",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -674,7 +674,7 @@
       "supportedTypes": [
         "movie"
       ],
-      "filename": "providers/bb_filmmodu.js",
+      "filename": "providers/bb_filmmodu.js?v=2",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -697,7 +697,7 @@
         "movie",
         "tv"
       ],
-      "filename": "providers/bb_hdfilmcehennemi.js",
+      "filename": "providers/bb_hdfilmcehennemi.js?v=2",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -719,7 +719,7 @@
       "supportedTypes": [
         "movie"
       ],
-      "filename": "providers/bb_jetfilmizle.js",
+      "filename": "providers/bb_jetfilmizle.js?v=2",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -741,7 +741,7 @@
       "supportedTypes": [
         "movie"
       ],
-      "filename": "providers/bb_selcukflix.js",
+      "filename": "providers/bb_selcukflix.js?v=2",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -764,7 +764,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/bb_sezonlukdizi.js",
+      "filename": "providers/bb_sezonlukdizi.js?v=2",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -787,7 +787,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/bb_webdramaturkey2.js",
+      "filename": "providers/bb_webdramaturkey2.js?v=2",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -810,7 +810,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/bb_yerlidiziler.js",
+      "filename": "providers/bb_yerlidiziler.js?v=2",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -832,7 +832,7 @@
       "supportedTypes": [
         "movie"
       ],
-      "filename": "providers/bb_yesilcamtv.js",
+      "filename": "providers/bb_yesilcamtv.js?v=2",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -856,7 +856,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/kekik_rectv.js",
+      "filename": "providers/kekik_rectv.js?v=2",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -879,7 +879,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/kekik_cizgimax.js",
+      "filename": "providers/kekik_cizgimax.js?v=2",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -903,7 +903,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/kekik_asyadizi.js",
+      "filename": "providers/kekik_asyadizi.js?v=2",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -927,7 +927,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/kekik_asyabox.js",
+      "filename": "providers/kekik_asyabox.js?v=2",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -951,7 +951,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/kekik_asyawatch.js",
+      "filename": "providers/kekik_asyawatch.js?v=2",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -973,7 +973,7 @@
       "supportedTypes": [
         "movie"
       ],
-      "filename": "providers/bb_filmmakinesi.js",
+      "filename": "providers/bb_filmmakinesi.js?v=2",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -995,7 +995,7 @@
       "supportedTypes": [
         "movie"
       ],
-      "filename": "providers/bb_fullhdfilmizlesene.js",
+      "filename": "providers/bb_fullhdfilmizlesene.js?v=2",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -1017,7 +1017,7 @@
       "supportedTypes": [
         "movie"
       ],
-      "filename": "providers/bb_fullhdfilm.js",
+      "filename": "providers/bb_fullhdfilm.js?v=2",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -1040,7 +1040,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/bb_koreanturk.js",
+      "filename": "providers/bb_koreanturk.js?v=2",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -1063,7 +1063,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/bb_turkanime.js",
+      "filename": "providers/bb_turkanime.js?v=2",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -1086,7 +1086,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/bb_aniarsiv.js",
+      "filename": "providers/bb_aniarsiv.js?v=2",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -1109,7 +1109,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/bb_animetr.js",
+      "filename": "providers/bb_animetr.js?v=2",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -1132,7 +1132,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/bb_asyafanatikleri.js",
+      "filename": "providers/bb_asyafanatikleri.js?v=2",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -1155,7 +1155,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/bb_asyalog.js",
+      "filename": "providers/bb_asyalog.js?v=2",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -1178,7 +1178,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/bb_asyaluna.js",
+      "filename": "providers/bb_asyaluna.js?v=2",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -1201,7 +1201,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/bb_asyamax.js",
+      "filename": "providers/bb_asyamax.js?v=2",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -1224,7 +1224,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/bb_asyadizileriizle.js",
+      "filename": "providers/bb_asyadizileriizle.js?v=2",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -1247,7 +1247,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/bb_birasyadizi.js",
+      "filename": "providers/bb_birasyadizi.js?v=2",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -1270,7 +1270,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/bb_dizimodu.js",
+      "filename": "providers/bb_dizimodu.js?v=2",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -1293,7 +1293,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/bb_diziasia.js",
+      "filename": "providers/bb_diziasia.js?v=2",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -1315,7 +1315,7 @@
       "supportedTypes": [
         "movie"
       ],
-      "filename": "providers/bb_hdfilmcehennemi2.js",
+      "filename": "providers/bb_hdfilmcehennemi2.js?v=2",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -1338,7 +1338,7 @@
         "movie",
         "tv"
       ],
-      "filename": "providers/bb_hdfilmdiziizle.js",
+      "filename": "providers/bb_hdfilmdiziizle.js?v=2",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -1360,7 +1360,7 @@
       "supportedTypes": [
         "movie"
       ],
-      "filename": "providers/bb_hdfilmizlebest.js",
+      "filename": "providers/bb_hdfilmizlebest.js?v=2",
       "enabled": true,
       "formats": [
         "m3u8",
