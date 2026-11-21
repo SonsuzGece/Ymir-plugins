@@ -165,9 +165,21 @@ async function getStreams(tmdbId, mediaType, season, episode, url) {
           headers: { "Content-Type": "application/x-www-form-urlencoded", "X-Requested-With": "XMLHttpRequest" },
           body: body
         });
-        var um = ajaxTxt.match(/"url"\s*:\s*"([^"]+)"/) || ajaxTxt.match(/src=["'](https?:\/\/[^"']+)["']/i);
-        if (um) {
-          var iframeUrl = um[1].replace(/\\\//g, "/");
+        var iframeUrl = "";
+        try {
+          var aj = JSON.parse(ajaxTxt);
+          iframeUrl = (aj && aj.data && (aj.data.url || aj.data.iframe || aj.data.src)) || aj.url || "";
+          if (typeof iframeUrl === "string" && iframeUrl.indexOf("<iframe") !== -1) {
+            var sm0 = iframeUrl.match(/src=["']([^"']+)["']/i);
+            iframeUrl = sm0 ? sm0[1] : "";
+          }
+        } catch (e) {}
+        if (!iframeUrl) {
+          var um = ajaxTxt.replace(/\\\//g, "/").match(/https?:\/\/[^"'\s<>\\]+/);
+          if (um) iframeUrl = um[0];
+        }
+        if (iframeUrl) {
+          iframeUrl = abs(iframeUrl.replace(/\\\//g, "/"));
           var iframeHtml = await fetchText(iframeUrl, { referer: pageUrl });
           var cer = iframeHtml.match(/SPG\.cerceve\(\s*["'][^"']+["']\s*,\s*["']([^"']+)["']\s*,\s*["']([^"']+)["']\s*\)/);
           if (cer) {

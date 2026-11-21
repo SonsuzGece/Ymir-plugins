@@ -238,7 +238,7 @@ async function getStreams(tmdbId, mediaType, season, episode, url) {
   var r = await httpGet(page, BASE + "/");
   // Port of loadAlpine: videoPlayerData(JSON.parse('...')) -> base64 template -> embed -> setup(JSON.parse('...'))
   try {
-    var am = r.text.match(/videoPlayerData\(JSON\.parse\('([\s\S]*?)'\)/);
+    var am = r.text.match(/videoPlayerData\(\s*JSON\.parse\(\s*'([\s\S]*?)'\s*\)/) || r.text.match(/x-data="[^"]*JSON\.parse\('([\s\S]*?)'\)/);
     if (am) {
       var jsStr = am[1].replace(/\\u0022/g, '"').replace(/\\u0027/g, "'").replace(/\\\//g, "/").replace(/\\'/g, "'").replace(/\\"/g, '"');
       var root = JSON.parse(jsStr);

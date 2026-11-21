@@ -154,7 +154,7 @@ async function __resolvePichive(iframeUrl, out, seen) {
   try {
     var om = iframeUrl.match(/^(https?:\/\/[^/]+)/);
     var orig = om ? om[1] : "https://four.pichive.online";
-    var r = await get(iframeUrl, orig + "/");
+    var r = await get(iframeUrl, BASE + "/");
     var html = r.text || "";
     var s = html.indexOf("window.NP_CONFIG");
     if (s >= 0) {

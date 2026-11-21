@@ -189,6 +189,7 @@ function genericEpisodes(html, pageUrl) {
     var full = absUrl(m[1]);
     if (full.indexOf(BASE) !== 0 || /share|facebook|twitter|whatsapp|pinterest/i.test(full)) continue;
     var path = full.slice(BASE.length).split("?")[0];
+    if (/\/(category|kategori|tag|etiket|page|sayfa|seriler)\b|\/(bolumler|diziler|filmler)\/?$/i.test(path)) continue;
     if (!/(bolum|episode|sezon|season)/i.test(path)) continue;
     if (seen[full]) continue; seen[full] = 1;
     var em = path.match(/(\d+)[-_]?(?:bolum|episode)/i) || path.match(/(?:bolum|episode)[-_/]?(\d+)/i);

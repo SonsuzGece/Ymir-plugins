@@ -323,7 +323,14 @@ async function getStreams(tmdbId, mediaType, season, episode, url) {
           var ar = await httpPost(BASE + "/wp-admin/admin-ajax.php", "action=get_source_url&post_id=" + postIdM[1] + "&source=" + encodeURIComponent(srcs[si]), page, { "X-Requested-With": "XMLHttpRequest" });
           var enc = (ar.text || "").trim();
           if (!enc || enc === "0" || enc === "error") continue;
-          var target = absUrl(__decryptSource(enc));
+          if (enc.charAt(0) === "{") {
+            try { var ej = JSON.parse(enc); enc = ej.data || ej.url || ej.src || enc; } catch (e) {}
+          }
+          enc = String(enc).replace(/^["']|["']$/g, "").trim();
+          var dec = enc.indexOf("http") === 0 ? enc : __decryptSource(enc);
+          var um = String(dec || "").replace(/\\\//g, "/").match(/https?:\/\/[^"'\s<>\\]+/);
+          if (!um) continue;
+          var target = absUrl(um[0]);
           if (/\.m3u8|\.mp4/i.test(target)) { pushDirectMedia(target, page, NAME, out, seen); continue; }
           var ir = await httpGet(target, page);
           var master = __xorFile(ir.text);

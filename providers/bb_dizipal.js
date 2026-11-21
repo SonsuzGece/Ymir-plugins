@@ -1,4 +1,4 @@
-// @provider {"id": "dizipal", "name": "DiziPal", "types": ["movie", "tv"], "domain": "dizipal2150.com", "formats": ["m3u8"], "sample": "tt0133093:movie:1:1", "description": "DiziPal - Turkce dizi ve film arsivi; PBKDF2+SHA512 player token -> dplayer82 HLS master.", "verified": true, "version":"1.0.14"}
+// @provider {"id": "dizipal", "name": "DiziPal", "types": ["movie", "tv"], "domain": "dizipal1596.com", "formats": ["m3u8"], "sample": "tt0133093:movie:1:1", "description": "DiziPal - Turkce dizi ve film arsivi; PBKDF2+SHA512 player token -> dplayer82 HLS master.", "verified": true, "version":"1.0.14"}
 /**
  * dizipal — Nuvio provider (bb-nuvio).
  * Flow: Cinemeta title -> POST /api/mj {action:searchContent} -> content/episode page
@@ -11,7 +11,7 @@
  */
 
 var UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:128.0) Gecko/20100101 Firefox/128.0";
-var BASE = "https://dizipal2150.com";
+var BASE = "https://dizipal1596.com";
 var B64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 var K512HEX =
   "428a2f98d728ae22 7137449123ef65cd b5c0fbcfec4d3b2f e9b5dba58189dbbc 3956c25bf348b538 59f111f1b605d019 923f82a4af194f9b ab1c5ed5da6d8118 " +
@@ -826,7 +826,7 @@ module.exports.getStreams = function (id, mediaType, season, episode) {
  *  bigbull build.mjs), __alt__ title bridge into the bb getStreams above.
  * =================================================================== */
 ;(function () {
-  var __CFG = {"id":"dizipal","name":"DiziPal","type":"series","url":"https://dizipal2150.com/yabanci-dizi-izle","item":"<a class=\"tc\"[\\s\\S]*?</a>","title":"<span class=\"tt\"[^>]*>([^<]+)</span>","poster":"<img[^>]+src=\"(https?://[^\"]+)\"","year":"aria-label=\"[^\"]*,\\s*(\\d{4}),","href":"href=\"([^\"]+)\"","group":["latest-series"]};
+  var __CFG = {"id":"dizipal","name":"DiziPal","type":"series","url":"https://dizipal1596.com/yabanci-dizi-izle","item":"<a class=\"tc\"[\\s\\S]*?</a>","title":"<span class=\"tt\"[^>]*>([^<]+)</span>","poster":"<img[^>]+src=\"(https?://[^\"]+)\"","year":"aria-label=\"[^\"]*,\\s*(\\d{4}),","href":"href=\"([^\"]+)\"","group":["latest-series"]};
   var __SERIES = true;
   var __UA = (typeof UA !== 'undefined' && UA) ? UA :
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36";
@@ -867,7 +867,10 @@ module.exports.getStreams = function (id, mediaType, season, episode) {
       if (poster && /^data:/i.test(poster)) poster = null;
       if (poster && poster.charAt(0) === "/") poster = __origin(__CFG.url) + poster;
       if (poster) poster = __stripTags(poster);
-      items.push({ id: "__alt__:" + encodeURIComponent(title), name: title, poster: poster || null,
+      var hrefM = __CFG.href ? new RegExp(__CFG.href, "i").exec(b) : null;
+      var itemHref = hrefM && hrefM[1] ? hrefM[1].replace(/\\\//g, "/") : "";
+      var itemId = itemHref ? ("__href__:" + encodeURIComponent(itemHref)) : ("__alt__:" + encodeURIComponent(title));
+      items.push({ id: itemId, name: title, poster: poster || null,
         type: __SERIES ? "tv" : "movie" });
       if (__CFG.limit && items.length >= __CFG.limit) break;
       if (items.length >= 100) break;

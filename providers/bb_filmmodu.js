@@ -353,7 +353,7 @@ module.exports.getStreams = function (id, mediaType, season, episode) {
     while ((m = re.exec(html)) !== null) {
       var open = m[1] + " " + m[3], href = m[2], inner = m[4];
       if (!/<img/i.test(inner)) continue;
-      if (href.indexOf("/film/") === -1 && !/\/[a-z0-9-]+-film-izle/i.test(href)) continue;
+      if (/\/(kategori|tur|page|sayfa|etiket|yil|oyuncu|login|giris|iletisim|filmler)\/?$/i.test(href) || href === "/" || href === origin + "/") continue;
       var full = href.indexOf("http") === 0 ? href : (origin + (href.charAt(0) === "/" ? href : "/" + href));
       if (seen[full]) continue;
       var img = (inner.match(/<img[^>]*>/i) || [""])[0];
