@@ -117,10 +117,12 @@ function rumbleRows(page, add) {
 
 function getStreams(imdbId, mediaType, season, episode) {
   var pageUrl = null;
-  return titleOf(imdbId, mediaType)
+  var directHref = (typeof imdbId === "string" && imdbId.indexOf("__href__:") === 0)
+    ? decodeURIComponent(imdbId.slice(9)) : null;
+  return (directHref ? Promise.resolve(directHref.indexOf("http") === 0 ? directHref : BASE + directHref) : titleOf(imdbId, mediaType)
     .then(function (title) {
       return filmUrl(title);
-    })
+    }))
     .then(function (url) {
       if (!url) return [];
       pageUrl = url;
@@ -150,10 +152,36 @@ function getStreams(imdbId, mediaType, season, episode) {
         var direct = /https?:\/\/[^"'\s<>]+?\.(?:m3u8|mp4)(?:\?[^"'\s<>]*)?/g;
         var m;
         while ((m = direct.exec(page)) !== null) add(m[0], "auto", pageUrl);
-        rows.sort(function (a, b) {
-          return (parseInt(b.quality, 10) || 0) - (parseInt(a.quality, 10) || 0);
+        var ifrChain = Promise.resolve();
+        if (!rows.length) {
+          var ifrRe = /<iframe[^>]+(?:data-src|src)="([^"]+)"/gi, fm, fList = [];
+          while ((fm = ifrRe.exec(page)) !== null) fList.push(fm[1]);
+          fList.slice(0, 4).forEach(function (src) {
+            ifrChain = ifrChain.then(function () {
+              var u = src.indexOf("//") === 0 ? "https:" + src : src;
+              if (u.indexOf("http") !== 0 || /rumble\.com/i.test(u)) return;
+              if (/ok\.ru|odnoklassniki/i.test(u)) {
+                var mid = (/videoembed\/(\d+)/.exec(u) || /video\/(\d+)/.exec(u) || [])[1];
+                if (!mid) return;
+                return fetch("https://ok.ru/dk?cmd=videoPlayerMetadata&mid=" + mid, { method: "POST", headers: { "User-Agent": UA, "Referer": "https://ok.ru/" } })
+                  .then(function (r) { return r.json(); })
+                  .then(function (j) { (j && j.videos || []).forEach(function (v) { if (v && v.url) add(v.url, v.name || "OkRu", "https://ok.ru/"); }); })
+                  .catch(function () {});
+              }
+              return text(u, { referer: pageUrl }).then(function (ih) {
+                var clean = ih.replace(/\\\//g, "/"), mm;
+                var re2 = /https?:\/\/[^"'\s<>\\]+\.(?:m3u8|mp4)(?:\?[^"'\s<>\\]*)?/gi;
+                while ((mm = re2.exec(clean)) !== null) add(mm[0], "Embed", u);
+              }).catch(function () {});
+            });
+          });
+        }
+        return ifrChain.then(function () {
+          rows.sort(function (a, b) {
+            return (parseInt(b.quality, 10) || 0) - (parseInt(a.quality, 10) || 0);
+          });
+          return rows.slice(0, 6);
         });
-        return rows.slice(0, 6);
       });
     })
     .catch(function (e) {
@@ -340,7 +368,10 @@ module.exports.getStreams = function (id, mediaType, season, episode) {
       if (poster && /^data:/i.test(poster)) poster = null;
       if (poster && poster.charAt(0) === "/") poster = __origin(__CFG.url) + poster;
       if (poster) poster = __stripTags(poster);
-      items.push({ id: "__alt__:" + encodeURIComponent(title), name: title, poster: poster || null,
+      var hrefM = __CFG.href ? new RegExp(__CFG.href, "i").exec(b) : null;
+      var itemHref = hrefM && hrefM[1] ? hrefM[1].replace(/\\\//g, "/") : "";
+      var itemId = itemHref ? ("__href__:" + encodeURIComponent(itemHref)) : ("__alt__:" + encodeURIComponent(title));
+      items.push({ id: itemId, name: title, poster: poster || null,
         type: __SERIES ? "tv" : "movie" });
       if (__CFG.limit && items.length >= __CFG.limit) break;
       if (items.length >= 100) break;

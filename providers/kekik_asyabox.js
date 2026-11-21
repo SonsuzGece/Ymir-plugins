@@ -2,7 +2,8 @@
 // AsyaBox — asyabox.co (ported from bigbullapp-cs AsyaDiziProvider.kt, current domain)
 // Generic HTML scraper: cards from a[href]+img; streams via m3u8/mp4 regex, iframes, OkRu.
 
-var BASE = "https://asyabox.co";
+var BASES = ["https://asyabox.co", "https://asyabox.com", "https://asyabox.net"];
+var BASE = BASES[0];
 var NAME = "AsyaBox";
 var ROWS = [
   ["Son Eklenenler", "/"],
@@ -45,17 +46,26 @@ function cards(html, query) {
   return out;
 }
 
-async function getCatalog() {
-  var r = await get(BASE + "/", BASE + "/");
-  var items = cards(r.text);
+async function getCatalog(args) {
+  var q = args && (args.query || args.search) ? String(args.query || args.search).trim() : "";
+  if (q) return search(q);
+  var items = [];
+  for (var bi = 0; bi < BASES.length && !items.length; bi++) {
+    try {
+      var r = await get(BASES[bi] + "/", BASES[bi] + "/");
+      if (r && r.ok && r.text) { BASE = BASES[bi]; items = cards(r.text); }
+    } catch (e) {}
+  }
   return { items: items.slice(0, 60) };
 }
-async function search(query) {
+async function search(args) {
+  var query = (typeof args === "object" && args) ? String(args.query || args.search || "") : String(args || "");
   var r = await get(BASE + "/?s=" + encodeURIComponent(query), BASE + "/");
   return { items: cards(r.text, query).slice(0, 40) };
 }
 
-async function getMeta(id) {
+async function getMeta(args) {
+  var id = (typeof args === "object" && args) ? String(args.id || "") : String(args || "");
   var url = id;
   var r = await get(url, BASE + "/");
   var html = r.text;
@@ -113,7 +123,8 @@ function pushMedia(text, ref, out, seen) {
 }
 
 async function getStreams(tmdbId, mediaType, season, episode, url) {
-  var data = url || tmdbId;
+  var data = (typeof url === "string" && url.indexOf("http") === 0) ? url : (typeof tmdbId === "string" ? tmdbId : (tmdbId && tmdbId.id ? String(tmdbId.id) : ""));
+  if (!data || data.indexOf("http") !== 0) return [];
   var out = [], seen = {};
   var first = await get(data, BASE + "/");
   var baseData = data.replace(/\/+$/, "");

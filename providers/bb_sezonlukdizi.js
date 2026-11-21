@@ -847,7 +847,9 @@ function getStreams(tmdbId, mediaType, season, episode) {
   var want = parseInt(season, 10) || 1;
   var wantEp = parseInt(episode, 10) || 1;
 
-  return titleOf(tmdbId, mediaType)
+  var directHref = (typeof tmdbId === "string" && tmdbId.indexOf("__href__:") === 0)
+    ? decodeURIComponent(tmdbId.slice(9)) : null;
+  return (directHref ? Promise.resolve({ url: abs(directHref), title: "" }) : titleOf(tmdbId, mediaType)
     .then(function (title) {
       if (!title) return null;
       return postForm(BASE + "/ajax/arama.asp", "q=" + encodeURIComponent(title), BASE + "/").then(function (raw) {
@@ -864,7 +866,7 @@ function getStreams(tmdbId, mediaType, season, episode) {
         }
         return pick(cards, title);
       });
-    })
+    }))
     .then(function (card) {
       if (!card) return null;
       var slug = String(card.url).split("/").pop();
@@ -876,7 +878,7 @@ function getStreams(tmdbId, mediaType, season, episode) {
       if (!episodeUrl) return [];
       return episodeAlternates(episodeUrl).then(function (alternates) {
         var chain = Promise.resolve([]);
-        alternates.forEach(function (entry) {
+        alternates.slice(0, 4).forEach(function (entry) {
           chain = chain.then(function (rows) {
             if (rows && rows.length) return rows;
             return embedUrl(episodeUrl, entry.id).then(function (embed) {
@@ -1088,7 +1090,10 @@ module.exports.getStreams = function (id, mediaType, season, episode) {
       if (poster && /^data:/i.test(poster)) poster = null;
       if (poster && poster.charAt(0) === "/") poster = __origin(__CFG.url) + poster;
       if (poster) poster = __stripTags(poster);
-      items.push({ id: "__alt__:" + encodeURIComponent(title), name: title, poster: poster || null,
+      var hrefM = __CFG.href ? new RegExp(__CFG.href, "i").exec(b) : null;
+      var itemHref = hrefM && hrefM[1] ? hrefM[1].replace(/\\\//g, "/") : "";
+      var itemId = itemHref ? ("__href__:" + encodeURIComponent(itemHref)) : ("__alt__:" + encodeURIComponent(title));
+      items.push({ id: itemId, name: title, poster: poster || null,
         type: __SERIES ? "tv" : "movie" });
       if (__CFG.limit && items.length >= __CFG.limit) break;
       if (items.length >= 100) break;

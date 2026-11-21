@@ -195,22 +195,23 @@ function getStreams(tmdbId, mediaType, season, episode) {
   var wanted = "";
   var absEp = want === 1 ? wantEp : 0;
 
-  return metaOf(tmdbId, mediaType, want, wantEp)
-    .then(function (info) {
-      if (!info.title) return null;
-      wanted = info.title;
-      absEp = info.absEp || absEp;
-      return text(BASE + "/arama/", {
-        method: "POST",
-        form: true,
-        body: "arama=" + encodeURIComponent(wanted)
+  var directHref = (typeof tmdbId === "string" && tmdbId.indexOf("__href__:") === 0)
+    ? decodeURIComponent(tmdbId.slice(9)) : null;
+  var epPromise = directHref
+    ? (directHref.indexOf("/diziler/") !== -1 ? findEpisode(directHref, want, wantEp, absEp) : Promise.resolve(directHref))
+    : metaOf(tmdbId, mediaType, want, wantEp)
+      .then(function (info) {
+        if (!info.title) return null;
+        wanted = info.title;
+        absEp = info.absEp || absEp;
+        return text(BASE + "/arama/", { method: "POST", form: true, body: "arama=" + encodeURIComponent(wanted) });
+      })
+      .then(function (search) {
+        var series = search && wanted ? pickSeries(search, wanted) : "";
+        if (!series) return null;
+        return findEpisode(series, want, wantEp, absEp);
       });
-    })
-    .then(function (search) {
-      var series = search && wanted ? pickSeries(search, wanted) : "";
-      if (!series) return null;
-      return findEpisode(series, want, wantEp, absEp);
-    })
+  return epPromise
     .then(function (episodeUrl) {
       if (!episodeUrl) return [];
       return text(episodeUrl, { referer: BASE + "/" }).then(function (html) {
@@ -424,7 +425,10 @@ module.exports.getStreams = function (id, mediaType, season, episode) {
       if (poster && /^data:/i.test(poster)) poster = null;
       if (poster && poster.charAt(0) === "/") poster = __origin(__CFG.url) + poster;
       if (poster) poster = __stripTags(poster);
-      items.push({ id: "__alt__:" + encodeURIComponent(title), name: title, poster: poster || null,
+      var hrefM = __CFG.href ? new RegExp(__CFG.href, "i").exec(b) : null;
+      var itemHref = hrefM && hrefM[1] ? hrefM[1].replace(/\\\//g, "/") : "";
+      var itemId = itemHref ? ("__href__:" + encodeURIComponent(itemHref)) : ("__alt__:" + encodeURIComponent(title));
+      items.push({ id: itemId, name: title, poster: poster || null,
         type: __SERIES ? "tv" : "movie" });
       if (__CFG.limit && items.length >= __CFG.limit) break;
       if (items.length >= 100) break;

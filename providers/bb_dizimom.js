@@ -386,7 +386,7 @@ module.exports.getStreams = function (id, mediaType, season, episode) {
  *  bigbull build.mjs), __alt__ title bridge into the bb getStreams above.
  * =================================================================== */
 ;(function () {
-  var __CFG = {"id":"dizimom","name":"DiziMom","type":"series","url":"https://ddizimom.icu/diziler?sirala=yeni","item":"<a href=\"https://ddizimom\\.net/dizi/[^\"]+\" class=\"group block\">[\\s\\S]*?</a>","title":"alt=\"([^\"]+)\"","strip":"\\s+Dizi izle$","poster":"src=\"([^\"]+)\"","year":"<p[^>]*>\\s*(\\d{4})\\s*</p>","group":["latest-series"]};
+  var __CFG = {"id":"dizimom","name":"DiziMom","type":"series","url":"https://ddizimom.icu/diziler?sirala=yeni","item":"<a href=\"https://ddizimom\\.[a-z0-9-]+/dizi/[^\"]+\" class=\"group block\">[\\s\\S]*?</a>","title":"alt=\"([^\"]+)\"","strip":"\\s+Dizi izle$","poster":"src=\"([^\"]+)\"","year":"<p[^>]*>\\s*(\\d{4})\\s*</p>","group":["latest-series"]};
   var __SERIES = true;
   var __UA = (typeof UA !== 'undefined' && UA) ? UA :
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36";

@@ -346,7 +346,7 @@ module.exports.getStreams = function (id, mediaType, season, episode) {
  *  bigbull build.mjs), __alt__ title bridge into the bb getStreams above.
  * =================================================================== */
 ;(function () {
-  var __CFG = {"id":"filmmodu","name":"FilmModu","type":"movie","url":"https://filmmodu.icu/filmler","item":"<a href=\"https://filmmodu\\.news/film/[^\"]+\"[^>]*class=\"group block\">[\\s\\S]*?</a>","title":"alt=\"([^\"]+)\"","strip":"\\s+Film\\s+[İi]zle$","poster":"src=\"([^\"]+)\"","year":"<p[^>]*>\\s*(\\d{4})\\s*</p>","group":["latest-movie"]};
+  var __CFG = {"id":"filmmodu","name":"FilmModu","type":"movie","url":"https://filmmodu.icu/filmler","item":"<a href=\"https://filmmodu\\.[a-z0-9-]+/film/[^\"]+\"[^>]*class=\"group block\">[\\s\\S]*?</a>","title":"alt=\"([^\"]+)\"","strip":"\\s+Film\\s+[İi]zle$","poster":"src=\"([^\"]+)\"","year":"<p[^>]*>\\s*(\\d{4})\\s*</p>","group":["latest-movie"]};
   var __SERIES = false;
   var __UA = (typeof UA !== 'undefined' && UA) ? UA :
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36";
@@ -370,7 +370,7 @@ module.exports.getStreams = function (id, mediaType, season, episode) {
       return { items: [{ id: "__alt__:" + encodeURIComponent(q), name: q, poster: null,
         type: __SERIES ? "tv" : "movie" }] };
     }
-    var html = await __fetch(__CFG.url);
+    var html = ""; try { html = await __fetch(__CFG.url); } catch (e) { html = await __fetch("https://www.filmmodu.one/filmler"); }
     if (__CFG.unescape) html = html.replace(/\\"/g, '"');
     var blocks = html.match(new RegExp(__CFG.item, "gi")) || [];
     var titleRe = new RegExp(__CFG.title, "i");

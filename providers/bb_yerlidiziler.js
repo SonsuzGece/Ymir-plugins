@@ -306,86 +306,93 @@ module.exports.getStreams = function (id, mediaType, season, episode) {
 
 
 /* ===================================================================
- *  Ymir adapter (bb-nuvio): catalog from addon config (parsing mirrors
- *  bigbull build.mjs), __alt__ title bridge into the bb getStreams above.
+ *  Ymir adapter (fixed): uses WP REST categories + posts directly
  * =================================================================== */
 ;(function () {
-  var __CFG = {"id":"yerlidiziler","name":"Yerli Diziler","type":"series","url":"https://yerlidiziler.com.tr/","item":"class=\"all-over-thumb-link\"[^>]*aria-label=\"[^\"]+\"|class=\"post-thumb\"[^>]*aria-label=\"[^\"]+\"","title":"aria-label=\"([^\"]+)\"","strip":"\\s+\\d+\\.\\s*Bölüm.*$","href":"href=\"([^\"]+)\"","group":["latest-series"],"limit":40};
-  var __SERIES = true;
-  var __UA = (typeof UA !== 'undefined' && UA) ? UA :
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36";
-  function __fetch(u) {
-    return fetch(u, { headers: { "User-Agent": __UA, "Accept-Language": "tr-TR,tr;q=0.9" } })
-      .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status + " " + u); return r.text(); });
-  }
-  var __ENT = { amp:"&", lt:"<", gt:">", quot:'"', apos:"'", nbsp:" ", ouml:"ö", uuml:"ü", Ouml:"Ö", Uuml:"Ü" };
-  function __stripTags(h) {
-    return String(h || "")
-      .replace(/<[^>]*>/g, " ")
-      .replace(/&([a-zA-Z]{2,8});/g, function (m, k) { return __ENT[k] != null ? __ENT[k] : m; })
-      .replace(/&#x([0-9a-fA-F]+);/g, function (_, x) { return String.fromCharCode(parseInt(x, 16)); })
-      .replace(/&#(\d+);/g, function (_, d) { return String.fromCharCode(+d); })
-      .replace(/\s+/g, " ").trim();
-  }
-  function __origin(u) { var m = /^(https?:\/\/[^/]+)/.exec(u); return m ? m[1] : ""; }
+  var __bbGetStreams = module.exports.getStreams;
   async function getCatalog(args) {
-    var q = args && args.query ? String(args.query).trim() : "";
+    var q = args && (args.query || args.search) ? String(args.query || args.search).trim() : "";
     if (q) {
-      return { items: [{ id: "__alt__:" + encodeURIComponent(q), name: q, poster: null,
-        type: __SERIES ? "tv" : "movie" }] };
+      var posts = await getJson(BASE + "/wp-json/wp/v2/posts?search=" + encodeURIComponent(q) + "&per_page=20&_fields=id,link,title");
+      var sItems = [];
+      if (Array.isArray(posts)) {
+        for (var i = 0; i < posts.length; i++) {
+          var p = posts[i];
+          var t = String((p.title && p.title.rendered) || "").replace(/<[^>]+>/g, "").trim();
+          if (t && p.link) sItems.push({ id: "__post__:" + encodeURIComponent(p.link), name: t, poster: null, type: "tv" });
+        }
+      }
+      return { items: sItems };
     }
-    var html = await __fetch(__CFG.url);
-    if (__CFG.unescape) html = html.replace(/\\"/g, '"');
-    var blocks = html.match(new RegExp(__CFG.item, "gi")) || [];
-    var titleRe = new RegExp(__CFG.title, "i");
-    var items = [], seen = {};
-    for (var i = 0; i < blocks.length; i++) {
-      var b = blocks[i];
-      var mm = titleRe.exec(b);
-      var title = mm ? __stripTags(mm[1]) : "";
-      if (__CFG.strip) title = title.replace(new RegExp(__CFG.strip, "i"), "").trim();
-      if (!title || title.length < 2) continue;
-      var key = title.toLowerCase();
-      if (seen[key]) continue; seen[key] = 1;
-      var poster = __CFG.poster ? ((new RegExp(__CFG.poster, "i").exec(b) || [])[1]) : null;
-      if (poster && /^data:/i.test(poster)) poster = null;
-      if (poster && poster.charAt(0) === "/") poster = __origin(__CFG.url) + poster;
-      if (poster) poster = __stripTags(poster);
-      items.push({ id: "__alt__:" + encodeURIComponent(title), name: title, poster: poster || null,
-        type: __SERIES ? "tv" : "movie" });
-      if (__CFG.limit && items.length >= __CFG.limit) break;
-      if (items.length >= 100) break;
-    }
-    if (!items.length) throw new Error("katalog boş: item regex eşleşmedi (" + __CFG.url + ")");
-    return { items: items };
-  }
-  async function search(args) { return getCatalog(args); }
-
-  // Series: synthetic season/episode grid so episodes are navigable; the bb
-  // getStreams resolves whichever S/E actually exists on the site.
-  async function getMeta(args) {
-    var id = args && args.id;
-    var title = /^__alt__:/.test(String(id)) ? decodeURIComponent(String(id).slice(8)) : String(id || "");
-    var videos = [];
-    var SEASONS = 3, EP = 30;
-    for (var s = 1; s <= SEASONS; s++) {
-      for (var e = 1; e <= EP; e++) {
-        videos.push({ id: id, title: s + ". Sezon " + e + ". Bölüm", season: s, episode: e });
+    var cats = await getJson(BASE + "/wp-json/wp/v2/categories?per_page=100&_fields=id,count,name,slug");
+    var items = [];
+    if (Array.isArray(cats)) {
+      for (var j = 0; j < cats.length; j++) {
+        var c = cats[j];
+        if (!c || !c.count || c.slug === "uncategorized") continue;
+        items.push({ id: "__cat__:" + c.id + ":" + encodeURIComponent(c.name), name: c.name, poster: "https://www.google.com/s2/favicons?domain=yerlidiziler.com.tr&sz=128", type: "tv" });
       }
     }
-    return { meta: { id: id, type: "series", name: title, videos: videos } };
+    return { items: items.slice(0, 60) };
   }
-
-  var __bbGetStreams = module.exports.getStreams;
+  async function search(args) { return getCatalog(args); }
+  async function getMeta(args) {
+    var id = (typeof args === "object" && args) ? String(args.id || "") : String(args || "");
+    var videos = [];
+    if (id.indexOf("__cat__:") === 0) {
+      var parts = id.split(":");
+      var catId = parts[1];
+      var name = decodeURIComponent(parts.slice(2).join(":"));
+      var posts = await getJson(BASE + "/wp-json/wp/v2/posts?categories=" + catId + "&per_page=30&_fields=link,title");
+      if (Array.isArray(posts)) {
+        for (var i = 0; i < posts.length; i++) {
+          var p = posts[i];
+          var t = String((p.title && p.title.rendered) || "").replace(/<[^>]+>/g, "").trim();
+          var m = /(\d+)\.\s*B[oö]l[uü]m/i.exec(t) || /-(\d+)-bolum/i.exec(p.link || "");
+          videos.push({ id: "__post__:" + encodeURIComponent(p.link), title: t || ("Bölüm " + (i + 1)), season: 1, episode: m ? parseInt(m[1], 10) : (i + 1) });
+        }
+      }
+      return { meta: { id: id, type: "series", name: name, videos: videos } };
+    }
+    if (id.indexOf("__post__:") === 0) {
+      videos.push({ id: id, title: "Bölüm", season: 1, episode: 1 });
+      return { meta: { id: id, type: "series", name: "YerliDiziler", videos: videos } };
+    }
+    return { meta: { id: id, type: "series", name: "YerliDiziler", videos: [{ id: id, title: "Bölüm 1", season: 1, episode: 1 }] } };
+  }
   async function getStreams(tmdbId, mediaType, season, episode, url) {
-    var id = url || tmdbId;
-    return __bbGetStreams(id, __SERIES ? "tv" : "movie", season, episode);
+    var id = url || tmdbId || "";
+    if (typeof id === "string" && id.indexOf("__post__:") === 0) {
+      var postUrl = decodeURIComponent(id.slice(9));
+      try {
+        var html = await text(postUrl, { referer: BASE + "/" });
+        var out = [], seen = {};
+        var clean = html.replace(/\\\//g, "/");
+        var dm = clean.match(/https?:\/\/[^"'\s<>\\]+\.(?:m3u8|mp4)(?:\?[^"'\s<>\\]*)?/gi) || [];
+        for (var i = 0; i < dm.length; i++) {
+          if (seen[dm[i]]) continue; seen[dm[i]] = 1;
+          out.push({ name: "YerliDiziler", url: dm[i], type: /\.m3u8/.test(dm[i]) ? "hls" : "mp4", headers: { Referer: postUrl, "User-Agent": UA } });
+        }
+        var ifr = /<iframe[^>]+(?:data-src|src)="([^"]+)"/gi, fm;
+        while ((fm = ifr.exec(html)) !== null) {
+          var fUrl = fm[1].indexOf("//") === 0 ? "https:" + fm[1] : fm[1];
+          if (fUrl.indexOf("http") !== 0) continue;
+          try {
+            var fh = (await text(fUrl, { referer: postUrl })).replace(/\\\//g, "/");
+            var fm2 = fh.match(/https?:\/\/[^"'\s<>\\]+\.(?:m3u8|mp4)(?:\?[^"'\s<>\\]*)?/gi) || [];
+            for (var j = 0; j < fm2.length; j++) {
+              if (seen[fm2[j]]) continue; seen[fm2[j]] = 1;
+              out.push({ name: "YerliDiziler", url: fm2[j], type: /\.m3u8/.test(fm2[j]) ? "hls" : "mp4", headers: { Referer: fUrl, "User-Agent": UA } });
+            }
+          } catch (e) {}
+        }
+        if (out.length) return out;
+      } catch (e) {}
+    }
+    return __bbGetStreams(id, "tv", season, episode);
   }
-  var __exports = { getCatalog: getCatalog, getStreams: getStreams, search: search };
-  if (__SERIES) __exports.getMeta = getMeta;
-  module.exports = __exports;
-  if (typeof globalThis !== 'undefined') {
-    globalThis.getCatalog = getCatalog; globalThis.getStreams = getStreams; globalThis.search = search;
-    if (__SERIES) globalThis.getMeta = getMeta;
+  module.exports = { getCatalog: getCatalog, getMeta: getMeta, getStreams: getStreams, search: search };
+  if (typeof globalThis !== "undefined") {
+    globalThis.getCatalog = getCatalog; globalThis.getMeta = getMeta; globalThis.getStreams = getStreams; globalThis.search = search;
   }
 })();

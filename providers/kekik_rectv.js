@@ -187,9 +187,10 @@ async function search(args) {
 }
 function recNum(s) { var m = /\d+/.exec(String(s || "")); return m ? parseInt(m[0], 10) : null; }
 async function getMeta(args) {
-  var raw = String((args && args.id) || "");
+  var raw = (typeof args === "string") ? args : String((args && args.id) || "");
   var node; try { node = JSON.parse(raw); } catch (e) { node = null; }
-  if (!node || node.k !== "serie") return { meta: null };
+  if (!node) return { meta: { id: raw, type: "movie", name: "RecTV", videos: [] } };
+  if (node.k !== "serie") return { meta: { id: raw, type: "movie", name: node.n || "RecTV", videos: [] } };
   var seasons = await signedJson("/api/season/by/serie/" + node.i + "/" + CFG.k1 + "/" + CFG.k2 + "/");
   var videos = [];
   if (Array.isArray(seasons)) for (var s = 0; s < seasons.length; s++) {

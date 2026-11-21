@@ -202,21 +202,30 @@ function getStreams(tmdbId, mediaType, season, episode) {
   var wantEp = parseInt(episode, 10) || 1;
 
   var title = "";
-  return titleOf(tmdbId, mediaType)
-    .then(function (t) {
-      title = t;
-      if (!title) return null;
-      return text(BASE + "/?s=" + encodeURIComponent(title));
-    })
-    .then(function (search) {
-      if (!search) return null;
-      var link = seriesLink(search, title);
-      if (!link) return null;
-      return text(abs(BASE, link));
-    })
+  var directHref = (typeof tmdbId === "string" && tmdbId.indexOf("__href__:") === 0)
+    ? decodeURIComponent(tmdbId.slice(9)) : null;
+  var detailPromise = directHref
+    ? text(abs(BASE, directHref))
+    : titleOf(tmdbId, mediaType)
+      .then(function (t) {
+        title = t;
+        if (!title) return null;
+        return text(BASE + "/?s=" + encodeURIComponent(title));
+      })
+      .then(function (search) {
+        if (!search) return null;
+        var link = seriesLink(search, title);
+        if (!link) return null;
+        return text(abs(BASE, link));
+      });
+  return detailPromise
     .then(function (detail) {
       if (!detail) return [];
       var cands = episodes(detail, want, wantEp);
+      if (!cands.length) {
+        var fm = /href="(https?:\/\/asyaanimeleri\.[^"]+bolum[^"]*)"/i.exec(detail);
+        if (fm) cands = [fm[1]];
+      }
       if (!cands.length) return [];
       return tryEach(cands, 0);
     })
@@ -405,7 +414,10 @@ module.exports.getStreams = function (id, mediaType, season, episode) {
       if (poster && /^data:/i.test(poster)) poster = null;
       if (poster && poster.charAt(0) === "/") poster = __origin(__CFG.url) + poster;
       if (poster) poster = __stripTags(poster);
-      items.push({ id: "__alt__:" + encodeURIComponent(title), name: title, poster: poster || null,
+      var hrefM = __CFG.href ? new RegExp(__CFG.href, "i").exec(b) : null;
+      var itemHref = hrefM && hrefM[1] ? hrefM[1].replace(/\\\//g, "/") : "";
+      var itemId = itemHref ? ("__href__:" + encodeURIComponent(itemHref)) : ("__alt__:" + encodeURIComponent(title));
+      items.push({ id: itemId, name: title, poster: poster || null,
         type: __SERIES ? "tv" : "movie" });
       if (__CFG.limit && items.length >= __CFG.limit) break;
       if (items.length >= 100) break;

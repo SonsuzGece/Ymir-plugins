@@ -5,7 +5,7 @@
  */
 
 var UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36";
-var BASE = "https://www.diziyou.one";
+var BASE = "https://www.diziyou.love";
 
 function text(url, opts) {
   var o = opts || {};
@@ -279,7 +279,7 @@ module.exports.getStreams = function (id, mediaType, season, episode) {
  *  bigbull build.mjs), __alt__ title bridge into the bb getStreams above.
  * =================================================================== */
 ;(function () {
-  var __CFG = {"id":"diziyou","name":"DiziYou","type":"series","url":"https://www.diziyou.one/","item":"<div id=\"list-series-main\">[\\s\\S]*?</a>","title":"aria-label=\"([^\"]+)\"","href":"href=\"([^\"]+)\"","limit":40};
+  var __CFG = {"id":"diziyou","name":"DiziYou","type":"series","url":"https://www.diziyou.love/","item":"<div id=\"list-series-main\">[\\s\\S]*?</a>","title":"aria-label=\"([^\"]+)\"","href":"href=\"([^\"]+)\"","limit":40};
   var __SERIES = true;
   var __UA = (typeof UA !== 'undefined' && UA) ? UA :
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36";

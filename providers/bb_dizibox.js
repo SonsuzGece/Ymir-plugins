@@ -117,6 +117,31 @@ function getStreams(tmdbId, mediaType, season, episode) {
       });
   }
 
+  var directHref = (typeof tmdbId === "string" && tmdbId.indexOf("__href__:") === 0)
+    ? decodeURIComponent(tmdbId.slice(9)) : null;
+  if (directHref) {
+    candidates = [abs(BASE, directHref)];
+    return fromSeries(0)
+      .then(function (epUrl) {
+        if (!epUrl) return [];
+        episodeUrl = epUrl;
+        return text(epUrl, { referer: BASE + "/" }).then(function (h) {
+          var m = /<iframe[^>]+src=["']([^"']+)["']/i.exec(h);
+          if (!m) return [];
+          embedUrl = abs(BASE, m[1]);
+          return text(embedUrl, { referer: epUrl }).then(function (eh) {
+            var out = [], seen = {};
+            var re = /https?:\/\/[^"'\s<>\\]+\.(?:m3u8|mp4)(?:\?[^"'\s<>\\]*)?/gi, mm;
+            var clean = eh.replace(/\\\//g, "/");
+            while ((mm = re.exec(clean)) !== null) {
+              if (seen[mm[0]]) continue; seen[mm[0]] = 1;
+              out.push({ name: "Dizibox", title: "Dizibox", url: mm[0], type: /\.m3u8/.test(mm[0]) ? "hls" : "mp4", headers: { Referer: embedUrl, "User-Agent": UA } });
+            }
+            return out;
+          });
+        });
+      }).catch(function () { return []; });
+  }
   return titleOf(tmdbId, mediaType)
     .then(function (title) {
       wantTitle = title;
@@ -353,7 +378,10 @@ module.exports.getStreams = function (id, mediaType, season, episode) {
       if (poster && /^data:/i.test(poster)) poster = null;
       if (poster && poster.charAt(0) === "/") poster = __origin(__CFG.url) + poster;
       if (poster) poster = __stripTags(poster);
-      items.push({ id: "__alt__:" + encodeURIComponent(title), name: title, poster: poster || null,
+      var hrefM = __CFG.href ? new RegExp(__CFG.href, "i").exec(b) : null;
+      var itemHref = hrefM && hrefM[1] ? hrefM[1].replace(/\\\//g, "/") : "";
+      var itemId = itemHref ? ("__href__:" + encodeURIComponent(itemHref)) : ("__alt__:" + encodeURIComponent(title));
+      items.push({ id: itemId, name: title, poster: poster || null,
         type: __SERIES ? "tv" : "movie" });
       if (__CFG.limit && items.length >= __CFG.limit) break;
       if (items.length >= 100) break;

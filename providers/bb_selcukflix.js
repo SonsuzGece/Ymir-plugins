@@ -689,13 +689,15 @@ function getStreams(tmdbId, mediaType, season, episode) {
   var wantEp = parseInt(episode, 10) || 1;
   var pageUrl = null;
 
-  return imdbOf(tmdbId, mediaType)
+  var directHref = (typeof tmdbId === "string" && tmdbId.indexOf("__href__:") === 0)
+    ? decodeURIComponent(tmdbId.slice(9)) : null;
+  return (directHref ? Promise.resolve({ used_slug: directHref }) : imdbOf(tmdbId, mediaType)
     .then(function (imdb) {
       return titleOf(imdb || tmdbId, mediaType).then(function (name) {
         if (!name) return null;
         return search(name, imdb, series);
       });
-    })
+    }))
     .then(function (hit) {
       if (!hit) return null;
       var slug = String(hit.used_slug).replace(/^\//, "");
@@ -883,7 +885,10 @@ module.exports.getStreams = function (id, mediaType, season, episode) {
       if (poster && /^data:/i.test(poster)) poster = null;
       if (poster && poster.charAt(0) === "/") poster = __origin(__CFG.url) + poster;
       if (poster) poster = __stripTags(poster);
-      items.push({ id: "__alt__:" + encodeURIComponent(title), name: title, poster: poster || null,
+      var hrefM = __CFG.href ? new RegExp(__CFG.href, "i").exec(b) : null;
+      var itemHref = hrefM && hrefM[1] ? hrefM[1].replace(/\\\//g, "/") : "";
+      var itemId = itemHref ? ("__href__:" + encodeURIComponent(itemHref)) : ("__alt__:" + encodeURIComponent(title));
+      items.push({ id: itemId, name: title, poster: poster || null,
         type: __SERIES ? "tv" : "movie" });
       if (__CFG.limit && items.length >= __CFG.limit) break;
       if (items.length >= 100) break;

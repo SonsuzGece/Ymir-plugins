@@ -203,7 +203,7 @@ function cfgReady() {
   }
   return _cfgReady;
 }
-var BASES = ["https://www.hdfilmizle.vip", "https://www.hdfilmizle.ink"];
+var BASES = ["https://www.hdfilmizle.live", "https://www.hdfilmizle.vip", "https://www.hdfilmizle.ink"];
 var TMDB_API_KEY = "500330721680edb6d5f7f12ba7cd9023";
 var UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML like Gecko) Chrome/120.0.0.0 Safari/537.36";
 function ultraClean(str) {

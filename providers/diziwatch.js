@@ -678,16 +678,33 @@ function getCatalog(args) {
       var query = args && args.search || args && args.extra && args.extra.search || args && args.query || "";
       if (query) {
         var sRes = yield searchDiziwatch(query);
-        return {
-          metas: sRes.map(function(r) {
-            return {
-              id: "diziwatch:show:" + r.used_slug,
-              type: "series",
-              name: r.object_name,
-              poster: r.poster || ""
-            };
-          })
-        };
+        if (!sRes || !sRes.length) {
+          try {
+            var sHtmlRes = yield fetch(BASE_URL + "/?s=" + encodeURIComponent(query), { headers: HEADERS, signal: timeoutSignal(8e3) });
+            if (sHtmlRes.ok) {
+              var sHtml = yield sHtmlRes.text();
+              var lr = /href=["'](?:https?:\/\/[^"'\/]+)?\/dizi\/([a-z0-9-]+)["']/gi, lm, sSeen = {};
+              sRes = [];
+              while ((lm = lr.exec(sHtml)) !== null) {
+                if (sSeen[lm[1]]) continue; sSeen[lm[1]] = 1;
+                sRes.push({ used_slug: lm[1], object_name: lm[1].replace(/-/g, " "), poster: "" });
+                if (sRes.length >= 20) break;
+              }
+            }
+          } catch (e) {}
+        }
+        if (sRes && sRes.length) {
+          return {
+            metas: sRes.map(function(r) {
+              return {
+                id: "diziwatch:show:" + r.used_slug,
+                type: "series",
+                name: r.object_name,
+                poster: r.poster || "https://raw.githubusercontent.com/falsisdev/anthology/main/assets/logo_1_transparent.png"
+              };
+            })
+          };
+        }
       }
       var res = yield fetch(BASE_URL + "/", {
         headers: HEADERS,

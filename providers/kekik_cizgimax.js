@@ -35,7 +35,9 @@ function parseCards(html) {
   return out;
 }
 
-async function getCatalog() {
+async function getCatalog(args) {
+  var q = args && (args.query || args.search) ? String(args.query || args.search).trim() : "";
+  if (q) return search(q);
   var r = await get(BASE + "/", BASE + "/");
   var items = parseCards(r.text);
   if (!items.length) { // fallback to the series archive
@@ -45,12 +47,14 @@ async function getCatalog() {
   return { items: items.slice(0, 60) };
 }
 
-async function search(query) {
+async function search(args) {
+  var query = (typeof args === "object" && args) ? String(args.query || args.search || "") : String(args || "");
   var r = await get(BASE + "/ara/?q=" + encodeURIComponent(query) + "&page=1", BASE + "/");
   return { items: parseCards(r.text).slice(0, 40) };
 }
 
-async function getMeta(id) {
+async function getMeta(args) {
+  var id = (typeof args === "object" && args) ? String(args.id || "") : String(args || "");
   var url = id;
   var r = await get(url, BASE + "/");
   var html = r.text;
@@ -98,7 +102,8 @@ async function tauVideo(resolveUrl, ref, out) {
 }
 
 async function getStreams(tmdbId, mediaType, season, episode, url) {
-  var page = url || tmdbId;
+  var page = (typeof url === "string" && url.indexOf("http") === 0) ? url : (typeof tmdbId === "string" ? tmdbId : (tmdbId && tmdbId.id ? String(tmdbId.id) : ""));
+  if (!page || page.indexOf("http") !== 0) return [];
   var out = [];
   var r = await get(page, BASE + "/");
   var sm = r.text.match(/var servers\s*=\s*JSON\.parse\(atob\("([^"]+)"\)\)/);

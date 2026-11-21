@@ -1,7 +1,7 @@
 {
   "id": "anthology",
   "name": "Anthology",
-  "version": "1.8.39",
+  "version": "1.9.0",
   "author": "falsisdev",
   "description": "Anthology - Türkçe Dizi, Film, Anime ve Canlı TV/Spor Eklenti Deposu",
   "scrapers": [
@@ -659,7 +659,7 @@
         "mp4",
         "hls"
       ],
-      "logo": "https://www.google.com/s2/favicons?domain=diziyou.com&sz=128",
+      "logo": "https://www.google.com/s2/favicons?domain=diziyou.love&sz=128",
       "contentLanguage": [
         "tr"
       ],
@@ -694,7 +694,8 @@
       "version": "1.0.0",
       "author": "bigbull/ymir",
       "supportedTypes": [
-        "movie"
+        "movie",
+        "tv"
       ],
       "filename": "providers/bb_hdfilmcehennemi.js",
       "enabled": true,
@@ -703,7 +704,7 @@
         "mp4",
         "hls"
       ],
-      "logo": "https://www.google.com/s2/favicons?domain=hdfilmcehennemi.nl&sz=128",
+      "logo": "https://www.google.com/s2/favicons?domain=hdfilmcehennemi.land&sz=128",
       "contentLanguage": [
         "tr"
       ],
@@ -958,6 +959,415 @@
         "hls"
       ],
       "logo": "https://www.google.com/s2/favicons?domain=asyawatch.com&sz=128",
+      "contentLanguage": [
+        "tr"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "bb_filmmakinesi",
+      "name": "FilmMakinesi",
+      "description": "FilmMakinesi — Türkçe dublaj/altyazılı filmler (oynatloload HLS).",
+      "version": "1.0.0",
+      "author": "bigbull/ymir",
+      "supportedTypes": [
+        "movie"
+      ],
+      "filename": "providers/bb_filmmakinesi.js",
+      "enabled": true,
+      "formats": [
+        "m3u8",
+        "mp4",
+        "hls"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=filmmakinesi.co&sz=128",
+      "contentLanguage": [
+        "tr"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "bb_fullhdfilmizlesene",
+      "name": "FullHDFilmizlesene",
+      "description": "FullHDFilmizlesene — Türkçe dublaj/altyazılı filmler (RapidVid HLS).",
+      "version": "1.0.0",
+      "author": "bigbull/ymir",
+      "supportedTypes": [
+        "movie"
+      ],
+      "filename": "providers/bb_fullhdfilmizlesene.js",
+      "enabled": true,
+      "formats": [
+        "m3u8",
+        "mp4",
+        "hls"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=fullhdfilmizlesene.now&sz=128",
+      "contentLanguage": [
+        "tr"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "bb_fullhdfilm",
+      "name": "FullHDFilm",
+      "description": "FullHDFilm — HD film arşivi (hdload HLS).",
+      "version": "1.0.0",
+      "author": "bigbull/ymir",
+      "supportedTypes": [
+        "movie"
+      ],
+      "filename": "providers/bb_fullhdfilm.js",
+      "enabled": true,
+      "formats": [
+        "m3u8",
+        "mp4",
+        "hls"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=fullhdfilmizlebox.vip&sz=128",
+      "contentLanguage": [
+        "tr"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "bb_koreanturk",
+      "name": "KoreanTurk",
+      "description": "KoreanTurk — Kore dizileri arşivi (doğrudan HLS).",
+      "version": "1.0.0",
+      "author": "bigbull/ymir",
+      "supportedTypes": [
+        "tv",
+        "series"
+      ],
+      "filename": "providers/bb_koreanturk.js",
+      "enabled": true,
+      "formats": [
+        "m3u8",
+        "mp4",
+        "hls"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=koreanturk.tv&sz=128",
+      "contentLanguage": [
+        "tr"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "bb_turkanime",
+      "name": "TurkAnimeTV",
+      "description": "TurkAnimeTV — Türkçe altyazılı anime arşivi (HLS).",
+      "version": "1.0.0",
+      "author": "bigbull/ymir",
+      "supportedTypes": [
+        "tv",
+        "series"
+      ],
+      "filename": "providers/bb_turkanime.js",
+      "enabled": true,
+      "formats": [
+        "m3u8",
+        "mp4",
+        "hls"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=turkanime.live&sz=128",
+      "contentLanguage": [
+        "tr"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "bb_aniarsiv",
+      "name": "AniArsiv",
+      "description": "AniArsiv — Anime arşivi (CDN MP4 + TauVideo).",
+      "version": "1.0.0",
+      "author": "bigbull/ymir",
+      "supportedTypes": [
+        "tv",
+        "series"
+      ],
+      "filename": "providers/bb_aniarsiv.js",
+      "enabled": true,
+      "formats": [
+        "m3u8",
+        "mp4",
+        "hls"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=aniarsiv.com&sz=128",
+      "contentLanguage": [
+        "tr"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "bb_animetr",
+      "name": "AnimeTR",
+      "description": "AnimeTR — Türkçe altyazılı anime arşivi.",
+      "version": "1.0.0",
+      "author": "bigbull/ymir",
+      "supportedTypes": [
+        "tv",
+        "series"
+      ],
+      "filename": "providers/bb_animetr.js",
+      "enabled": true,
+      "formats": [
+        "m3u8",
+        "mp4",
+        "hls"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=animetr.co&sz=128",
+      "contentLanguage": [
+        "tr"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "bb_asyafanatikleri",
+      "name": "AsyaFanatikleri",
+      "description": "AsyaFanatikleri — Kore/Çin/Japon/BL dizileri.",
+      "version": "1.0.0",
+      "author": "bigbull/ymir",
+      "supportedTypes": [
+        "tv",
+        "series"
+      ],
+      "filename": "providers/bb_asyafanatikleri.js",
+      "enabled": true,
+      "formats": [
+        "m3u8",
+        "mp4",
+        "hls"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=asyafanatikleri.vip&sz=128",
+      "contentLanguage": [
+        "tr"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "bb_asyalog",
+      "name": "AsyaLog",
+      "description": "AsyaLog — Asya dizi arşivi (OkRu/HLS).",
+      "version": "1.0.0",
+      "author": "bigbull/ymir",
+      "supportedTypes": [
+        "tv",
+        "series"
+      ],
+      "filename": "providers/bb_asyalog.js",
+      "enabled": true,
+      "formats": [
+        "m3u8",
+        "mp4",
+        "hls"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=asyalog.co&sz=128",
+      "contentLanguage": [
+        "tr"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "bb_asyaluna",
+      "name": "AsyaLuna",
+      "description": "AsyaLuna — Asya dizi ve film arşivi.",
+      "version": "1.0.0",
+      "author": "bigbull/ymir",
+      "supportedTypes": [
+        "tv",
+        "series"
+      ],
+      "filename": "providers/bb_asyaluna.js",
+      "enabled": true,
+      "formats": [
+        "m3u8",
+        "mp4",
+        "hls"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=asyaluna.com&sz=128",
+      "contentLanguage": [
+        "tr"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "bb_asyamax",
+      "name": "AsyaMax",
+      "description": "AsyaMax — Asya dizi ve film arşivi.",
+      "version": "1.0.0",
+      "author": "bigbull/ymir",
+      "supportedTypes": [
+        "tv",
+        "series"
+      ],
+      "filename": "providers/bb_asyamax.js",
+      "enabled": true,
+      "formats": [
+        "m3u8",
+        "mp4",
+        "hls"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=asyamax.com&sz=128",
+      "contentLanguage": [
+        "tr"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "bb_asyadizileriizle",
+      "name": "AsyaDizileriIzle",
+      "description": "AsyaDizileriIzle — Asya dizileri arşivi.",
+      "version": "1.0.0",
+      "author": "bigbull/ymir",
+      "supportedTypes": [
+        "tv",
+        "series"
+      ],
+      "filename": "providers/bb_asyadizileriizle.js",
+      "enabled": true,
+      "formats": [
+        "m3u8",
+        "mp4",
+        "hls"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=asyadizileriizle.com&sz=128",
+      "contentLanguage": [
+        "tr"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "bb_birasyadizi",
+      "name": "BirAsyaDizi",
+      "description": "BirAsyaDizi — Asya dizileri arşivi.",
+      "version": "1.0.0",
+      "author": "bigbull/ymir",
+      "supportedTypes": [
+        "tv",
+        "series"
+      ],
+      "filename": "providers/bb_birasyadizi.js",
+      "enabled": true,
+      "formats": [
+        "m3u8",
+        "mp4",
+        "hls"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=birasyadizi.cx&sz=128",
+      "contentLanguage": [
+        "tr"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "bb_dizimodu",
+      "name": "DiziModu",
+      "description": "DiziModu — Yabancı dizi arşivi.",
+      "version": "1.0.0",
+      "author": "bigbull/ymir",
+      "supportedTypes": [
+        "tv",
+        "series"
+      ],
+      "filename": "providers/bb_dizimodu.js",
+      "enabled": true,
+      "formats": [
+        "m3u8",
+        "mp4",
+        "hls"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=dizimodu.com&sz=128",
+      "contentLanguage": [
+        "tr"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "bb_diziasia",
+      "name": "DiziAsia",
+      "description": "DiziAsia — Kore, Çin ve Japon dizileri.",
+      "version": "1.0.0",
+      "author": "bigbull/ymir",
+      "supportedTypes": [
+        "tv",
+        "series"
+      ],
+      "filename": "providers/bb_diziasia.js",
+      "enabled": true,
+      "formats": [
+        "m3u8",
+        "mp4",
+        "hls"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=diziasia.com&sz=128",
+      "contentLanguage": [
+        "tr"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "bb_hdfilmcehennemi2",
+      "name": "HDFilmCehennemi2",
+      "description": "HDFilmCehennemi2 — HD film arşivi.",
+      "version": "1.0.0",
+      "author": "bigbull/ymir",
+      "supportedTypes": [
+        "movie"
+      ],
+      "filename": "providers/bb_hdfilmcehennemi2.js",
+      "enabled": true,
+      "formats": [
+        "m3u8",
+        "mp4",
+        "hls"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=hdfilmcehennemi2.biz&sz=128",
+      "contentLanguage": [
+        "tr"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "bb_hdfilmdiziizle",
+      "name": "HDFilmDiziIzle",
+      "description": "HDFilmDiziIzle — HD film ve dizi arşivi.",
+      "version": "1.0.0",
+      "author": "bigbull/ymir",
+      "supportedTypes": [
+        "movie",
+        "tv"
+      ],
+      "filename": "providers/bb_hdfilmdiziizle.js",
+      "enabled": true,
+      "formats": [
+        "m3u8",
+        "mp4",
+        "hls"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=hdfilmdiziizle.com&sz=128",
+      "contentLanguage": [
+        "tr"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "bb_hdfilmizlebest",
+      "name": "HDFilmizleBest",
+      "description": "HDFilmizleBest — HD film arşivi.",
+      "version": "1.0.0",
+      "author": "bigbull/ymir",
+      "supportedTypes": [
+        "movie"
+      ],
+      "filename": "providers/bb_hdfilmizlebest.js",
+      "enabled": true,
+      "formats": [
+        "m3u8",
+        "mp4",
+        "hls"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=hdfilmizle.best&sz=128",
       "contentLanguage": [
         "tr"
       ],
