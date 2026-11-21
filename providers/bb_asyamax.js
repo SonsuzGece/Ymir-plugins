@@ -28,6 +28,7 @@ async function httpPost(url, body, ref, extra) {
 function absUrl(u, base) {
   if (!u) return "";
   u = String(u).trim();
+  if (/^(data:|javascript:|about:|blob:)/i.test(u)) return "";
   if (u.indexOf("http://") === 0 || u.indexOf("https://") === 0) return u;
   if (u.indexOf("//") === 0) return "https:" + u;
   if (u.charAt(0) === "/") return (base || BASE) + u;
@@ -134,8 +135,12 @@ async function extractGenericStreams(pageUrl, html, out, seen, followParts) {
   var embeds = [];
   var er = /"(?:embedUrl|contentUrl|embed_url|player_url)"\s*:\s*"([^"]+)"/gi, em;
   while ((em = er.exec(clean)) !== null) embeds.push(em[1]);
-  var fr = /<iframe[^>]+(?:data-src|data-lazy-src|vdo-src|src)=["']([^"']+)["']/gi, fm;
-  while ((fm = fr.exec(html)) !== null) embeds.push(fm[1]);
+  var fr = /<iframe\b[^>]*>/gi, fm;
+  while ((fm = fr.exec(html)) !== null) {
+    var tag = fm[0];
+    var src = attrOf(tag, "data-src") || attrOf(tag, "data-lazy-src") || attrOf(tag, "vdo-src") || attrOf(tag, "src");
+    if (src && !/^(data:|about:|javascript:)/i.test(src)) embeds.push(src);
+  }
   var tried = {};
   for (var i = 0; i < embeds.length && i < 6; i++) {
     var eUrl = absUrl(embeds[i]);

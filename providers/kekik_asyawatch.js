@@ -181,6 +181,15 @@ async function __resolvePichive(iframeUrl, out, seen) {
         }
       }
     }
+    if (!out.length && html) {
+      var ch = html.replace(/\\\//g, "/");
+      var m2 = ch.match(/["'](?:file|src|master|url)["']\s*:\s*["'](https?:\/\/[^"']+\.(?:m3u8|mp4)[^"']*)["']/i)
+            || ch.match(/(https?:\/\/[^"'\s<>\\]+\.(?:m3u8|mp4)(?:\?[^"'\s<>\\]*)?)/i);
+      if (m2 && !seen[m2[1]]) {
+        seen[m2[1]] = 1;
+        out.push({ name: NAME + " · Pichive", url: m2[1], type: /\.mp4(\?|$)/i.test(m2[1]) ? "mp4" : "hls", headers: { "User-Agent": UA, "Referer": orig + "/" } });
+      }
+    }
   } catch (e) {}
 }
 

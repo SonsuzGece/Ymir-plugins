@@ -115,10 +115,22 @@ async function resolveEmbedUrl(frame, ref, label, out, seen) {
   if (!u || u.indexOf("http") !== 0 || /youtu\.?be|facebook\.com|twitter\.com|google|ads|vzaar/i.test(u)) return;
   if (/\.m3u8|\.mp4/i.test(u)) { pushDirectMedia(u, ref, label, out, seen); return; }
   if (/ok\.ru|odnoklassniki/i.test(u)) { await resolveOkRu(u, label, out, seen); return; }
+
+  if (/sibnet\.ru/i.test(u)) {
+    try {
+      var sr = await httpGet(u, "https://video.sibnet.ru/");
+      var sm = sr.text.match(/player\.src\(\[\{\s*src:\s*["']([^"']+)["']/i);
+      if (sm) {
+        var su = sm[1].indexOf("http") === 0 ? sm[1] : ("https://video.sibnet.ru" + sm[1]);
+        if (!seen[su]) { seen[su] = 1; out.push({ name: (label || NAME) + " · Sibnet", url: su, type: "mp4", headers: { "User-Agent": UA, "Referer": "https://video.sibnet.ru/" } }); }
+      }
+    } catch (e) {}
+    return;
+  }
   if (/tau-video\.xyz/i.test(u)) { await resolveTauVideo(u, label, out, seen); return; }
   try {
     var target = u.replace(/vidmoly\.(?:to|me|biz)/i, "vidmoly.net");
-    var r = await httpGet(target, ref || (BASE + "/"));
+    var r = await httpGet(target, /vidmoly/i.test(target) ? (BASE + "/") : (ref || (BASE + "/")), /vidmoly/i.test(target) ? { "Sec-Fetch-Dest": "iframe" } : null);
     pushDirectMedia(r.text, target, label, out, seen);
     var jsRedir = r.text.match(/location\.replace\(\s*['"](https?:\/\/[^'"]+)['"]\s*\)/i);
     if (jsRedir) {
