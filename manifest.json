@@ -1,7 +1,7 @@
 {
   "id": "anthology",
   "name": "Anthology",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "author": "falsisdev",
   "description": "Anthology - Türkçe Dizi, Film, Anime ve Canlı TV/Spor Eklenti Deposu",
   "scrapers": [
@@ -15,7 +15,7 @@
         "tv",
         "movie"
       ],
-      "filename": "providers/animecix.js?v=5",
+      "filename": "providers/animecix.js?v=6",
       "enabled": true,
       "formats": [
         "mp4"
@@ -55,7 +55,7 @@
         "movie",
         "anime"
       ],
-      "filename": "providers/anizium.js?v=5",
+      "filename": "providers/anizium.js?v=6",
       "enabled": true,
       "formats": [
         "mp4"
@@ -96,7 +96,7 @@
         "tv",
         "movie"
       ],
-      "filename": "providers/asyaanimeleri.js?v=5",
+      "filename": "providers/asyaanimeleri.js?v=6",
       "enabled": true,
       "formats": [
         "mp4",
@@ -137,7 +137,7 @@
         "movie",
         "tv"
       ],
-      "filename": "providers/ddizi.js?v=5",
+      "filename": "providers/ddizi.js?v=6",
       "enabled": true,
       "formats": [
         "mp4",
@@ -178,7 +178,7 @@
         "movie",
         "tv"
       ],
-      "filename": "providers/yabancidizi.js?v=5",
+      "filename": "providers/yabancidizi.js?v=6",
       "enabled": true,
       "formats": [
         "hls",
@@ -201,7 +201,7 @@
         "movie",
         "tv"
       ],
-      "filename": "providers/setfilmizle.js?v=5",
+      "filename": "providers/setfilmizle.js?v=6",
       "enabled": true,
       "formats": [
         "hls",
@@ -252,7 +252,7 @@
         "movie",
         "tv"
       ],
-      "filename": "providers/hdfilmdelisi.js?v=5",
+      "filename": "providers/hdfilmdelisi.js?v=6",
       "enabled": true,
       "formats": [
         "hls",
@@ -292,7 +292,7 @@
         "movie",
         "tv"
       ],
-      "filename": "providers/hdfilmizle.js?v=5",
+      "filename": "providers/hdfilmizle.js?v=6",
       "enabled": true,
       "formats": [
         "hls",
@@ -334,7 +334,7 @@
         "series",
         "anime"
       ],
-      "filename": "providers/diziwatch.js?v=5",
+      "filename": "providers/diziwatch.js?v=6",
       "enabled": true,
       "formats": [
         "hls",
@@ -363,7 +363,7 @@
         "movie",
         "anime"
       ],
-      "filename": "providers/seicode.js?v=5",
+      "filename": "providers/seicode.js?v=6",
       "enabled": true,
       "formats": [
         "mp4",
@@ -404,7 +404,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/bb_animecix.js?v=5",
+      "filename": "providers/bb_animecix.js?v=6",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -427,7 +427,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/bb_dizibal.js?v=5",
+      "filename": "providers/bb_dizibal.js?v=6",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -450,7 +450,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/bb_dizibox.js?v=5",
+      "filename": "providers/bb_dizibox.js?v=6",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -473,7 +473,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/bb_dizikorea3.js?v=5",
+      "filename": "providers/bb_dizikorea3.js?v=6",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -496,7 +496,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/bb_dizilla.js?v=5",
+      "filename": "providers/bb_dizilla.js?v=6",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -519,7 +519,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/bb_dizimom.js?v=5",
+      "filename": "providers/bb_dizimom.js?v=6",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -542,7 +542,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/bb_diziyou.js?v=5",
+      "filename": "providers/bb_diziyou.js?v=6",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -564,7 +564,7 @@
       "supportedTypes": [
         "movie"
       ],
-      "filename": "providers/bb_jetfilmizle.js?v=5",
+      "filename": "providers/bb_jetfilmizle.js?v=6",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -587,7 +587,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/bb_webdramaturkey2.js?v=5",
+      "filename": "providers/bb_webdramaturkey2.js?v=6",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -610,7 +610,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/bb_yerlidiziler.js?v=5",
+      "filename": "providers/bb_yerlidiziler.js?v=6",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -632,7 +632,7 @@
       "supportedTypes": [
         "movie"
       ],
-      "filename": "providers/bb_yesilcamtv.js?v=5",
+      "filename": "providers/bb_yesilcamtv.js?v=6",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -656,7 +656,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/kekik_rectv.js?v=5",
+      "filename": "providers/kekik_rectv.js?v=6",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -679,7 +679,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/kekik_cizgimax.js?v=5",
+      "filename": "providers/kekik_cizgimax.js?v=6",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -703,7 +703,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/kekik_asyadizi.js?v=5",
+      "filename": "providers/kekik_asyadizi.js?v=6",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -711,30 +711,6 @@
         "hls"
       ],
       "logo": "https://www.google.com/s2/favicons?domain=asyadizi.com&sz=128",
-      "contentLanguage": [
-        "tr"
-      ],
-      "supportsExternalPlayer": true
-    },
-    {
-      "id": "kekik_asyawatch",
-      "name": "AsyaWatch",
-      "description": "AsyaWatch — Asya dizi/film (bigbull portu).",
-      "version": "1.0.0",
-      "author": "bigbullapp/ymir",
-      "supportedTypes": [
-        "movie",
-        "tv",
-        "series"
-      ],
-      "filename": "providers/kekik_asyawatch.js?v=5",
-      "enabled": true,
-      "formats": [
-        "m3u8",
-        "mp4",
-        "hls"
-      ],
-      "logo": "https://www.google.com/s2/favicons?domain=asyawatch.com&sz=128",
       "contentLanguage": [
         "tr"
       ],
@@ -749,7 +725,7 @@
       "supportedTypes": [
         "movie"
       ],
-      "filename": "providers/bb_filmmakinesi.js?v=5",
+      "filename": "providers/bb_filmmakinesi.js?v=6",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -771,7 +747,7 @@
       "supportedTypes": [
         "movie"
       ],
-      "filename": "providers/bb_fullhdfilm.js?v=5",
+      "filename": "providers/bb_fullhdfilm.js?v=6",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -794,7 +770,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/bb_koreanturk.js?v=5",
+      "filename": "providers/bb_koreanturk.js?v=6",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -817,7 +793,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/bb_turkanime.js?v=5",
+      "filename": "providers/bb_turkanime.js?v=6",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -840,7 +816,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/bb_aniarsiv.js?v=5",
+      "filename": "providers/bb_aniarsiv.js?v=6",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -848,29 +824,6 @@
         "hls"
       ],
       "logo": "https://www.google.com/s2/favicons?domain=aniarsiv.com&sz=128",
-      "contentLanguage": [
-        "tr"
-      ],
-      "supportsExternalPlayer": true
-    },
-    {
-      "id": "bb_animetr",
-      "name": "AnimeTR",
-      "description": "AnimeTR — Türkçe altyazılı anime arşivi.",
-      "version": "1.0.0",
-      "author": "bigbull/ymir",
-      "supportedTypes": [
-        "tv",
-        "series"
-      ],
-      "filename": "providers/bb_animetr.js?v=5",
-      "enabled": true,
-      "formats": [
-        "m3u8",
-        "mp4",
-        "hls"
-      ],
-      "logo": "https://www.google.com/s2/favicons?domain=animetr.co&sz=128",
       "contentLanguage": [
         "tr"
       ],
@@ -886,7 +839,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/bb_asyafanatikleri.js?v=5",
+      "filename": "providers/bb_asyafanatikleri.js?v=6",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -909,7 +862,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/bb_asyamax.js?v=5",
+      "filename": "providers/bb_asyamax.js?v=6",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -932,7 +885,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/bb_asyadizileriizle.js?v=5",
+      "filename": "providers/bb_asyadizileriizle.js?v=6",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -955,7 +908,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/bb_birasyadizi.js?v=5",
+      "filename": "providers/bb_birasyadizi.js?v=6",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -978,7 +931,7 @@
         "tv",
         "series"
       ],
-      "filename": "providers/bb_diziasia.js?v=5",
+      "filename": "providers/bb_diziasia.js?v=6",
       "enabled": true,
       "formats": [
         "m3u8",
@@ -1000,7 +953,7 @@
       "supportedTypes": [
         "movie"
       ],
-      "filename": "providers/bb_hdfilmizlebest.js?v=5",
+      "filename": "providers/bb_hdfilmizlebest.js?v=6",
       "enabled": true,
       "formats": [
         "m3u8",
