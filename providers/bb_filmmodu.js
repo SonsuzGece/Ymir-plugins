@@ -373,7 +373,7 @@ module.exports.getStreams = function (id, mediaType, season, episode) {
   async function getCatalog(args) {
     var q = args && (args.query || args.search) ? String(args.query || args.search).trim() : "";
     if (q) return { items: [{ id: "__alt__:" + encodeURIComponent(q), name: q, poster: null, type: "movie" }] };
-    var urls = ["https://filmmodu.icu/filmler", "https://www.filmmodu.one/filmler", "https://filmmodu.icu/", "https://www.filmmodu.one/"];
+    var urls = ["https://www.filmmodu.one/filmler", "https://filmmodu.icu/filmler"];
     for (var i = 0; i < urls.length; i++) {
       try {
         var r = await fetch(urls[i], { headers: { "User-Agent": __UA, "Accept-Language": "tr-TR,tr;q=0.9" } });

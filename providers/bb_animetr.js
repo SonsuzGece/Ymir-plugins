@@ -210,7 +210,7 @@ function parseAnimeCards(html) {
     var open = m[1], inner = m[2];
     if (!/anime-card/i.test(open)) continue;
     var href = attrOf(open, "href");
-    if (!href || /\/bolumler\b|\.(png|jpg|webp|svg)$/i.test(href)) continue;
+    if (!href || /\/bolumler\b|\/seriler\b|\.(png|jpg|webp|svg)$/i.test(href)) continue;
     var u = absUrl(href);
     if (seen[u]) continue; seen[u] = 1;
     var im = inner.match(/<img[^>]+(?:data-src|data-lazy-src|src)=["']([^"']+)["']/i);
@@ -223,7 +223,7 @@ function parseAnimeCards(html) {
   if (!out.length) {
     var fallback = genericCards(html, "tv");
     for (var i = 0; i < fallback.length; i++) {
-      if (!/\/bolumler\b|\.(png|jpg|webp|svg)$/i.test(fallback[i].id)) out.push(fallback[i]);
+      if (/\/(anime|seri|dizi)\//i.test(fallback[i].id) && !/\/bolumler\b|\.(png|jpg|webp|svg)$/i.test(fallback[i].id)) out.push(fallback[i]);
     }
   }
   return out;

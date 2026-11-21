@@ -233,12 +233,111 @@ async function getMeta(args) {
   var tm = r.text.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i);
   return { meta: { id: url, type: "tv", name: tm ? stripTags(tm[1]) : NAME, videos: genericEpisodes(r.text, url) } };
 }
+
+// Pure-JS AES-256-CBC decrypt (PKCS7) + xorFile for HDFilmDiziIzle
+var __SBOX = [
+  99,124,119,123,242,107,111,197,48,1,103,43,254,215,171,118,202,130,201,125,250,89,71,240,173,212,162,175,156,164,114,192,
+  183,253,147,38,54,63,247,204,52,165,229,241,113,216,49,21,4,199,35,195,24,150,5,154,7,18,128,226,235,39,178,117,
+  9,131,44,26,27,110,90,160,82,59,214,179,41,227,47,132,83,209,0,237,32,252,177,91,106,203,190,57,74,76,88,207,
+  208,239,170,251,67,77,51,133,69,249,2,127,80,60,159,168,81,163,64,143,146,157,56,245,188,182,218,33,16,255,243,210,
+  205,12,19,236,95,151,68,23,196,167,126,61,100,93,25,115,96,129,79,220,34,42,144,136,70,238,184,20,222,94,11,219,
+  224,50,58,10,73,6,36,92,194,211,172,98,145,149,228,121,231,200,55,109,141,213,78,169,108,86,244,234,101,122,174,8,
+  186,120,37,46,28,166,180,198,232,221,116,31,75,189,139,138,112,62,181,102,72,3,246,14,97,53,87,185,134,193,29,158,
+  225,248,152,17,105,217,142,148,155,30,135,233,206,85,40,223,140,161,137,13,191,230,66,104,65,153,45,15,176,84,187,22
+];
+var __ISBOX = new Array(256); for (var __i = 0; __i < 256; __i++) __ISBOX[__SBOX[__i]] = __i;
+function __gm(a, b) { var p = 0; for (var i = 0; i < 8; i++) { if (b & 1) p ^= a; var hi = a & 0x80; a = (a << 1) & 0xff; if (hi) a ^= 0x1b; b >>= 1; } return p; }
+function __aes256CbcDecrypt(ctBytes, keyStr, ivStr) {
+  var key = [], iv = [];
+  for (var i = 0; i < keyStr.length; i++) key.push(keyStr.charCodeAt(i) & 0xff);
+  for (var j = 0; j < ivStr.length; j++) iv.push(ivStr.charCodeAt(j) & 0xff);
+  var w = key.slice(), rcon = 1;
+  while (w.length < 240) {
+    var t = w.slice(w.length - 4);
+    if (w.length % 32 === 0) { t = [__SBOX[t[1]] ^ rcon, __SBOX[t[2]], __SBOX[t[3]], __SBOX[t[0]]]; rcon = __gm(rcon, 2); }
+    else if (w.length % 32 === 16) { t = [__SBOX[t[0]], __SBOX[t[1]], __SBOX[t[2]], __SBOX[t[3]]]; }
+    for (var k = 0; k < 4; k++) w.push(w[w.length - 32] ^ t[k]);
+  }
+  var out = [], prev = iv.slice();
+  for (var off = 0; off < ctBytes.length; off += 16) {
+    var s = ctBytes.slice(off, off + 16), orig = s.slice();
+    for (var a = 0; a < 16; a++) s[a] ^= w[224 + a];
+    for (var rd = 13; rd >= 0; rd--) {
+      // InvShiftRows
+      var n = s.slice();
+      n[1]=s[13]; n[5]=s[1]; n[9]=s[5]; n[13]=s[9];
+      n[2]=s[10]; n[6]=s[14]; n[10]=s[2]; n[14]=s[6];
+      n[3]=s[7]; n[7]=s[11]; n[11]=s[15]; n[15]=s[3];
+      for (var b = 0; b < 16; b++) s[b] = __ISBOX[n[b]] ^ w[rd * 16 + b];
+      if (rd > 0) {
+        for (var c = 0; c < 4; c++) {
+          var i0=c*4, s0=s[i0], s1=s[i0+1], s2=s[i0+2], s3=s[i0+3];
+          s[i0]   = __gm(s0,14)^__gm(s1,11)^__gm(s2,13)^__gm(s3,9);
+          s[i0+1] = __gm(s0,9)^__gm(s1,14)^__gm(s2,11)^__gm(s3,13);
+          s[i0+2] = __gm(s0,13)^__gm(s1,9)^__gm(s2,14)^__gm(s3,11);
+          s[i0+3] = __gm(s0,11)^__gm(s1,13)^__gm(s2,9)^__gm(s3,14);
+        }
+      }
+    }
+    for (var x = 0; x < 16; x++) out.push(s[x] ^ prev[x]);
+    prev = orig;
+  }
+  var pad = out[out.length - 1];
+  if (pad > 0 && pad <= 16) out = out.slice(0, out.length - pad);
+  var str = ""; for (var z = 0; z < out.length; z++) str += String.fromCharCode(out[z]);
+  return str;
+}
+function __decryptSource(b64) {
+  var bin = atob(String(b64 || "").trim()), bytes = [];
+  for (var i = 0; i < bin.length; i++) bytes.push(bin.charCodeAt(i) & 0xff);
+  return __aes256CbcDecrypt(bytes, "0123456789abcdef0123456789abcdef", "abcdef9876543210");
+}
+function __xorFile(html) {
+  var re = /\(function\(d,\s*k\)[\s\S]{0,300}?\}\)\(\[([\d,\s]+)\],\s*"([^"]+)"\)/g, m;
+  while ((m = re.exec(html)) !== null) {
+    var nums = m[1].split(","), key = m[2], out = "";
+    for (var i = 0; i < nums.length; i++) {
+      var v = parseInt(nums[i].trim(), 10);
+      if (isNaN(v)) continue;
+      out += String.fromCharCode(v ^ key.charCodeAt(i % key.length) ^ ((i * 17 + 13) & 255));
+    }
+    if (out.indexOf("http://") === 0 || out.indexOf("https://") === 0) return out;
+  }
+  return null;
+}
+
 async function getStreams(tmdbId, mediaType, season, episode, url) {
   var page = streamUrlArg(tmdbId, url);
   if (!page) return [];
   var out = [], seen = {};
   var r = await httpGet(page, BASE + "/");
-  await extractGenericStreams(page, r.text, out, seen, false);
+  try {
+    var postIdM = r.text.match(/postid-(\d+)/) || r.text.match(/data-id="(\d+)"/);
+    if (postIdM) {
+      var btnRe = /playhd-btn[^>]*data-source="([^"]+)"/gi, bm, srcs = [];
+      while ((bm = btnRe.exec(r.text)) !== null) {
+        if (bm[1] !== "fragman_url" && srcs.indexOf(bm[1]) < 0) srcs.push(bm[1]);
+      }
+      for (var si = 0; si < srcs.length && si < 4; si++) {
+        try {
+          var ar = await httpPost(BASE + "/wp-admin/admin-ajax.php", "action=get_source_url&post_id=" + postIdM[1] + "&source=" + encodeURIComponent(srcs[si]), page, { "X-Requested-With": "XMLHttpRequest" });
+          var enc = (ar.text || "").trim();
+          if (!enc || enc === "0" || enc === "error") continue;
+          var target = absUrl(__decryptSource(enc));
+          if (/\.m3u8|\.mp4/i.test(target)) { pushDirectMedia(target, page, NAME, out, seen); continue; }
+          var ir = await httpGet(target, page);
+          var master = __xorFile(ir.text);
+          if (master) {
+            var baseM = ir.text.match(/<base\s+href="([^"]+)"/i);
+            var ref = baseM ? baseM[1] : target;
+            if (!seen[master]) { seen[master] = 1; out.push({ name: NAME + " · HLS", url: master, type: "hls", headers: { "User-Agent": UA, "Referer": ref } }); }
+          }
+          pushDirectMedia(ir.text, target, NAME, out, seen);
+        } catch (e) {}
+      }
+    }
+  } catch (e) {}
+  if (!out.length) await extractGenericStreams(page, r.text, out, seen, false);
   return out;
 }
 

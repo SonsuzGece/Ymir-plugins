@@ -115,6 +115,20 @@ async function resolveEmbedUrl(frame, ref, label, out, seen) {
   if (!u || u.indexOf("http") !== 0 || /youtu\.?be|facebook\.com|twitter\.com|google|ads|vzaar/i.test(u)) return;
   if (/\.m3u8|\.mp4/i.test(u)) { pushDirectMedia(u, ref, label, out, seen); return; }
   if (/ok\.ru|odnoklassniki/i.test(u)) { await resolveOkRu(u, label, out, seen); return; }
+
+  if (/playerd?korea/i.test(u) && u.indexOf("/video/") > 0) {
+    try {
+      var orig = u.split("/video/")[0];
+      var vid = u.split("/video/")[1].split("?")[0].split("/")[0];
+      var pr = await httpPost(orig + "/player/index.php?data=" + encodeURIComponent(vid) + "&do=getVideo",
+        "hash=" + encodeURIComponent(vid) + "&r=" + encodeURIComponent(BASE + "/"), u,
+        { "X-Requested-With": "XMLHttpRequest", "Origin": orig });
+      var pj = JSON.parse(pr.text || "{}");
+      if (pj.videoSource) pushDirectMedia(pj.videoSource, u, (label || NAME) + " · FirePlayer", out, seen);
+      if (pj.securedLink) pushDirectMedia(pj.securedLink, u, (label || NAME) + " · FirePlayer", out, seen);
+    } catch (e) {}
+    return;
+  }
   if (/tau-video\.xyz/i.test(u)) { await resolveTauVideo(u, label, out, seen); return; }
   try {
     var target = u.replace(/vidmoly\.(?:to|me|biz)/i, "vidmoly.net");

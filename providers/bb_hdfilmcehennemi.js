@@ -173,7 +173,7 @@ async function getStreams(tmdbId, mediaType, season, episode, url) {
           if (cer) {
             var fpUrl = spgDecode(cer[1], cer[2]);
             if (fpUrl && fpUrl.indexOf("http") === 0) {
-              var fpHtml = await fetchText(fpUrl, { referer: iframeUrl });
+              var fpHtml = await fetchText(fpUrl, { referer: iframeUrl, headers: { "User-Agent": "Mozilla/5.0 (Linux; Android 13; SM-G991B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Mobile Safari/537.36" } });
               var sm = fpHtml.match(/stream:\s*"([^"]+)"/);
               var spM = fpHtml.match(/"sp"\s*:\s*"([^"]+)"/);
               var spTM = fpHtml.match(/"spT"\s*:\s*(\d+)/);

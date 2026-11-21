@@ -206,7 +206,7 @@ function genericEpisodes(html, pageUrl) {
 async function getCatalog(args) {
   var q = argQuery(args);
   if (q) return search(q);
-  var r = await httpGet(BASE + "/", BASE + "/");
+  var r = await httpGet(BASE + "/category/yeni-eklenen-bolumler/", BASE + "/");
   var items = [];
   var chunks = r.text.split("post-container"), seenAm = {};
   for (var ci = 1; ci < chunks.length; ci++) {
@@ -215,7 +215,7 @@ async function getCatalog(args) {
           || ch.match(/<a[^>]*href=["'](https?:\/\/asyamax\.com\/[^"'?#]+)["'][^>]*title=["']([^"']+)["']/i);
     if (!am) continue;
     var u = absUrl(am[1]);
-    if (/\/category\/|\/tag\/|\/page\//i.test(u) || seenAm[u]) continue;
+    if (/\/category\/|\/tag\/|\/page\/|\/yil\//i.test(u) || u === BASE + "/" || seenAm[u]) continue;
     var title = stripTags(am[2]);
     if (!title || title.length < 2) continue;
     var im = ch.match(/<img[^>]+(?:data-src|data-lazy-src|src)=["']([^"']+)["']/i);

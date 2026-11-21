@@ -259,7 +259,10 @@ async function getStreams(tmdbId, mediaType, season, episode, url) {
               var cfg = JSON.parse(sm[1].replace(/\\u0022/g, '"').replace(/\\\//g, "/").replace(/\\"/g, '"'));
               if (cfg.file) pushDirectMedia(cfg.file, embed, NAME + " · " + k, out, seen);
             }
-            pushDirectMedia(er.text, embed, NAME, out, seen);
+            var cleanEr = er.text.replace(/\\\\\//g, "/").replace(/\\\//g, "/").replace(/\\u0022/g, '"');
+            var fm2 = cleanEr.match(/\bfile\s*:\s*["'](https?:\/\/[^"']+)["']/i);
+            if (fm2) pushDirectMedia(fm2[1], embed, NAME + " · " + k, out, seen);
+            pushDirectMedia(cleanEr, embed, NAME, out, seen);
           } catch (e) {}
         }
       }
